@@ -1,0 +1,18 @@
+
+start: widget | display | variable
+
+widget: "widget" [ NAME ] _args "{" suite "}"
+display: "display" [ NAME ] [ _args ] "{" suite "}"
+
+property: NAME "=" value
+
+_args: "(" [ NAME ("," NAME)* [ "," ] ] ")"
+
+suite: (property | variable)*
+
+NAME: /[a-zA-Z_]\w*/
+
+_TERM: _NEWLINE | ";"
+_NEWLINE: ( /\r?\n[\t ]*/ | COMMENT )+
+
+COMMENT: /\/[^\/]*\//
