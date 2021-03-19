@@ -23,10 +23,13 @@ variable: VARNAME "=" value_expr
 ?value: "[" [ value_expr ("," value_expr)* [ "," ] ] "]" -> array
     |   widget
     |   VARNAME -> var
-    |   NAME -> var
-    |   NUMBER
-    |   ESCAPED_STRING
+    |   NAME -> property
+    |   number
+    |   string
     |   "(" value_expr ")"
+
+number: NUMBER
+string: ESCAPED_STRING
 
 VARNAME: /\$[a-zA-Z_]\w*/
 NAME: /[a-zA-Z_]\w*/

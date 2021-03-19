@@ -1,1 +1,2 @@
 lark-parser
+git+git://github.com/SigJig/armaconfig.py.git@master#egg=armaconfig
