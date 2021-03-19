@@ -1,18 +1,42 @@
 
-start: widget | display | variable
+start: (stmt | _TERM)*
+
+?stmt: simple_stmt | compound_stmt
+?simple_stmt: (property | variable) _TERM
+?compound_stmt: widget | display
 
 widget: "widget" [ NAME ] _args "{" suite "}"
 display: "display" [ NAME ] [ _args ] "{" suite "}"
 
-property: NAME "=" value
-
 _args: "(" [ NAME ("," NAME)* [ "," ] ] ")"
 
-suite: (property | variable)*
+suite: (simple_stmt)*
+property: NAME "=" value_expr
+variable: VARNAME "=" value_expr
 
+?value_expr: mul_expr (_add_op mul_expr)*
+?mul_expr: value (_mul_op value)*
+
+!_add_op: "+" | "-"
+!_mul_op: "*" | "/" | "%"
+
+?value: "[" [ value_expr ("," value_expr)* [ "," ] ] "]" -> array
+    |   widget
+    |   VARNAME -> var
+    |   NAME -> var
+    |   NUMBER
+    |   ESCAPED_STRING
+    |   "(" value_expr ")"
+
+VARNAME: /\$[a-zA-Z_]\w*/
 NAME: /[a-zA-Z_]\w*/
 
-_TERM: _NEWLINE | ";"
-_NEWLINE: ( /\r?\n[\t ]*/ | COMMENT )+
+_TERM: ";"
+_NEWLINE: ( /\r?\n[\t ]*/ )+
 
-COMMENT: /\/[^\/]*\//
+%ignore CPP_COMMENT
+%ignore C_COMMENT
+%ignore WS
+// %ignore /\\[\t \f]*\r?\n/
+
+%import common (WS, WS_INLINE, NUMBER, ESCAPED_STRING, CPP_COMMENT, C_COMMENT)

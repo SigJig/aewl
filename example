@@ -1,41 +1,41 @@
 
-$point_size = 20
-$bar_width = 60
+$point_size = 20;
+$bar_width = 60;
 
 widget capture_progress(group_widget) {
-    height = $point_size
+    height = $point_size;
     
     // width of the bar plus the points on each side
-    width = $bar_width + $point_size * 2
+    width = $bar_width + $point_size * 2;
 
     children = [
         widget points(group_widget) {
 
             children = [
                 widget attackers(text_widget) {
-                    size = $point_size
-                    font = "PuristaLight"
-                    horizontal = start
+                    size = $point_size;
+                    font = "PuristaLight";
+                    horizontal = start;
                 },
-                widget defenders(attackers) {
-                    horizontal = end
+                widget defenders(attackers) {
+                    horizontal = end;
                 }
-            ]
+            ];
         },
         widget progressbar(group_widget) {
-            horizontal = center
-            width = $bar_width
+            horizontal = center;
+            width = $bar_width;
 
             children = [
                 widget bar(progress_widget) {
                     
                 },
                 widget text(text_widget) {
-                    height = 3
-                    text = "Setting up"
-                    vertical = center
+                    height = 3;
+                    text = "Setting up";
+                    vertical = center;
                 }
-            ]
+            ];
         }
-    ]
+    ];
 }
