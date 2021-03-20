@@ -1,8 +1,12 @@
 
 class Scope:
-    def __init__(self, parent=None):
+    def __init__(self, name, parent=None):
+        self.name = name
         self.variables = {}
         self.parent = parent
+
+    def __str__(self):
+        return self.name
 
     def add_variable(self, key, value):
         self.variables[key] = value
@@ -18,12 +22,13 @@ class Scope:
 
 class Unit(Scope):
     def __init__(self, name):
-        self.name = name
-
         self.links = []
         self.widgets = {}
 
-        super().__init__()
+        super().__init__(name)
+
+    def export(self):
+        return {str(self): {k: v.export() for k, v in self.widgets.items()}}
 
     def add_widget(self, name, *args, **kwargs):
         widget = self.make_widget(name, *args, **kwargs)
@@ -62,9 +67,18 @@ class Widget(Scope):
         self.inherits = inherits
         self.properties = {}
 
-        super().__init__(parent=parent)
+        super().__init__(name=name, parent=parent)
 
-    def export(self): pass
+    def export(self):
+        def _export(x):
+            if isinstance(x, list):
+                return [_export(y) for y in x]
+            elif hasattr(x, 'export'):
+                return x.export()
+            else:
+                return x
+        
+        return {k: _export(v) for k, v in self.properties.items()}
 
     def add_property(self, key, value):
         self.properties[key] = value

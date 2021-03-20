@@ -93,10 +93,11 @@ def parse(src, name):
         else:
             raise Exception('Unexpected %s' % t.data)
 
-    return tree
+    return unit
 
 
 if __name__ == '__main__':
+    import json
 
     with open('example') as fp:
-        print(parse(fp.read(), '').pretty())
+        print(json.dumps(parse(fp.read(), fp.name).export(), indent=4))
