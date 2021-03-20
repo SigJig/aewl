@@ -15,6 +15,13 @@ class Transformer(BaseTransformer):
     def string(self, s):
         return s[1:-1].replace('\\"', '"')
 
+    @v_args(inline=True)
+    def inherits(self, *i):
+        return [str(x) for x in i]
+
+    def inherits_opt(self, *args, **kwargs):
+        return []
+
     array = list
     number = v_args(inline=True)(float)
 

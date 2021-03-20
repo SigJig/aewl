@@ -5,10 +5,11 @@ start: (stmt | _TERM)*
 ?simple_stmt: (property_def | variable_def) _TERM
 ?compound_stmt: widget_def | display_def
 
-widget_def: "widget" [ NAME ] _args "{" suite "}"
-display_def: "display" [ NAME ] [ _args ] "{" suite "}"
+widget_def: "widget" [ NAME ] inherits "{" suite "}"
+display_def: "display" [ NAME ] inherits_opt "{" suite "}"
 
-_args: "(" NAME ("," NAME)* [ "," ] ")"
+inherits: "(" NAME ("," NAME)* [ "," ] ")"
+?inherits_opt: [ inherits ]
 
 suite: (simple_stmt)*
 property_def: NAME "=" value_expr

@@ -36,18 +36,20 @@ class Unit(Scope):
 
         return widget
 
-    def make_widget(self, name, inherits_name=None, is_display=False):
-        if inherits_name is None:
-            inherits = self.get_widget(inherits_name)
+    def make_widget(self, name, inherits=[], is_display=False):
+        inherits_wdg = []
 
-            if inherits is None:
-                raise Exception('Attempted inherit not found (%s)' % inherits_name)
-        else:
-            inherits = None
+        for i in inherits:
+            wdg = self.get_widget(i)
+
+            if wdg is None:
+                raise Exception('Attempted inherit not found (%s)' % i)
+
+            inherits_wdg.append(wdg)
 
         type_ = Widget if not is_display else Display
 
-        return type_(name, inherits, self)
+        return type_(name, inherits_wdg, self)
 
     def get_widget(self, name):
         if name in self.widgets:
