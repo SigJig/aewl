@@ -10,6 +10,7 @@ widget capture_progress(group_widget) {
 
     children = [
         widget points(group_widget) {
+            width = 100%;
 
             children = [
                 widget attackers(text_widget) {

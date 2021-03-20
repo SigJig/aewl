@@ -25,6 +25,7 @@ variable_def: VARNAME "=" value_expr
     |   widget_def
     |   VARNAME -> variable
     |   NAME -> property
+    |   NUMBER "%" -> percentage
     |   NUMBER -> number
     |   ESCAPED_STRING -> string
     |   "(" value_expr ")"

@@ -6,7 +6,9 @@ from lark import (
     Tree
 )
 
-from unit import Unit, Widget
+from unit import Unit
+from helpers import Percentage
+from widgets import Widget
 
 GRAMMAR_FILE = 'aewl/grammar.lark'
 
@@ -24,6 +26,7 @@ class Transformer(BaseTransformer):
 
     array = list
     number = v_args(inline=True)(float)
+    percentage = v_args(inline=True)(Percentage)
 
 
 def parse_value(value, scope):
