@@ -2,17 +2,17 @@
 start: (stmt | _TERM)*
 
 ?stmt: simple_stmt | compound_stmt
-?simple_stmt: (property | variable) _TERM
-?compound_stmt: widget | display
+?simple_stmt: (property_def | variable_def) _TERM
+?compound_stmt: widget_def | display_def
 
-widget: "widget" [ NAME ] _args "{" suite "}"
-display: "display" [ NAME ] [ _args ] "{" suite "}"
+widget_def: "widget" [ NAME ] _args "{" suite "}"
+display_def: "display" [ NAME ] [ _args ] "{" suite "}"
 
-_args: "(" [ NAME ("," NAME)* [ "," ] ] ")"
+_args: "(" NAME ("," NAME)* [ "," ] ")"
 
 suite: (simple_stmt)*
-property: NAME "=" value_expr
-variable: VARNAME "=" value_expr
+property_def: NAME "=" value_expr
+variable_def: VARNAME "=" value_expr
 
 ?value_expr: mul_expr (_add_op mul_expr)*
 ?mul_expr: value (_mul_op value)*
@@ -21,15 +21,12 @@ variable: VARNAME "=" value_expr
 !_mul_op: "*" | "/" | "%"
 
 ?value: "[" [ value_expr ("," value_expr)* [ "," ] ] "]" -> array
-    |   widget
-    |   VARNAME -> var
+    |   widget_def
+    |   VARNAME -> variable
     |   NAME -> property
-    |   number
-    |   string
+    |   NUMBER -> number
+    |   ESCAPED_STRING -> string
     |   "(" value_expr ")"
-
-number: NUMBER
-string: ESCAPED_STRING
 
 VARNAME: /\$[a-zA-Z_]\w*/
 NAME: /[a-zA-Z_]\w*/
