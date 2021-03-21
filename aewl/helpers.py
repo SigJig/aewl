@@ -30,6 +30,12 @@ class EmptyFactor:
     def __sub__(self, other):
         return self._operation_skip_if(0, other, '-')
 
+    def _filter_redundant_prod(self, return_):
+        if float(self) == 1:
+            return return_
+
+        return '({}*{})'.format(float(self), return_)
+
 class Factor(EmptyFactor, float):
     def __str__(self):
         return '{}({})'.format(type(self).__name__, float(self))
@@ -83,18 +89,18 @@ class PixelGrid(EmptyFactor):
 
 class SafeZoneW(Factor):
     def export(self):
-        return '({} * safeZoneW)'.format(float(self))
+        return self._filter_redundant_prod('safeZoneW')
 
 class SafeZoneH(Factor):
     def export(self):
-        return '({} * safeZoneH)'.format(float(self))
+        return self._filter_redundant_prod('safeZoneH')
 
 class PixelH(Factor):
     def export(self):
-        return '({} * pixelH)'.format(float(self))
+        return self._filter_redundant_prod('pixelH')
 
 class PixelW(Factor):
     def export(self):
-        return '({} * pixelW)'.format(float(self))
+        return self._filter_redundant_prod('pixelW')
 
 class Percentage(float): pass

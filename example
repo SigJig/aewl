@@ -2,41 +2,45 @@
 $point_size = 20;
 $bar_width = 60;
 
-widget capture_progress(group_widget) {
-    height = $point_size;
-    
-    // width of the bar plus the points on each side
-    width = $bar_width + $point_size * 2;
+display hud {
+    body = [
+        widget capture_progress(group_widget) {
+            height = $point_size;
+            
+            // width of the bar plus the points on each side
+            width = $bar_width + $point_size * 2;
 
-    children = [
-        widget points(group_widget) {
             children = [
-                widget attackers(text_widget) {
-                    width = $point_size;
-                    height = $point_size;
-                    text = "0";
-                    font = "PuristaLight";
-                    horizontal = "start";
+                widget points(group_widget) {
+                    children = [
+                        widget attackers(text_widget) {
+                            width = $point_size;
+                            height = $point_size;
+                            text = "0";
+                            font = "PuristaLight";
+                            horizontal = "start";
+                        },
+                        widget defenders(text_widget) {
+                            width = $point_size;
+                            height = $point_size;
+                            text = "0";
+                            font = "PuristaLight";
+                            horizontal = "end";
+                        }
+                    ];
                 },
-                widget defenders(text_widget) {
-                    width = $point_size;
-                    height = $point_size;
-                    text = "0";
-                    font = "PuristaLight";
-                    horizontal = "end";
-                }
-            ];
-        },
-        widget progressbar(group_widget) {
-            horizontal = "center";
-            width = $bar_width;
+                widget progressbar(group_widget) {
+                    horizontal = "center";
+                    width = $bar_width;
 
-            children = [
-                widget bar(progress_widget) {},
-                widget text(text_widget) {
-                    height = 3;
-                    text = "Setting up";
-                    vertical = "center";
+                    children = [
+                        widget bar(progress_widget) {},
+                        widget text(text_widget) {
+                            height = 3;
+                            text = "Setting up";
+                            vertical = "center";
+                        }
+                    ];
                 }
             ];
         }

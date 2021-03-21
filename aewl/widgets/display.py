@@ -24,9 +24,9 @@ class Display(Widget):
         else:
             raise Exception('BRO????')
 
-    def _resolve_directional(self, dir_, value):
+    def _resolve_directional(self, dir_, len_name, value):
         sz_type, sz_unit = (
-            (SafeZoneX(), SafeZoneW(1)) if dir_ == 'width' else (SafeZoneY(), SafeZoneH(1))
+            (SafeZoneX(), SafeZoneW(1)) if len_name == 'width' else (SafeZoneY(), SafeZoneH(1))
         )
 
         if value == 'start':
@@ -34,12 +34,12 @@ class Display(Widget):
         elif value == 'center':
             return (
                 (sz_type + sz_unit) / 2
-                - self.get_processed(dir_) / 2
+                - self.get_processed(len_name) / 2
             )
         elif value == 'end':
             return (
                 (sz_type) + sz_unit
-                - self.get_processed(dir_)
+                - self.get_processed(len_name)
             )
 
     def _layer_group(self, name, body):
@@ -56,8 +56,10 @@ class Display(Widget):
 
     @customizer([], alias='controls')
     def body(self, k, body):
-        return self._layer_group(BODYNAME, body)
+        return {
+            BODYNAME: self._layer_group(BODYNAME, body)}
 
     @customizer([], alias='controlsBackground')
     def body_background(self, k, body):
-        return self._layer_group(BODYNAME_BACKGROUND, body)
+        return {
+            BODYNAME_BACKGROUND: self._layer_group(BODYNAME_BACKGROUND, body)}

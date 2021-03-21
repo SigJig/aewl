@@ -82,8 +82,11 @@ class Widget(Scope):
             self.processed[k] = result
 
     def process_all(self):
-        for k, v in self.properties.items():
-            self.process(k, v)
+        for attr in dir(self):
+            method = getattr(self, attr)
+
+            if getattr(method, 'is_customizer', False):
+                self.process(attr, self.properties.get(attr, None))
 
     def export(self):
         def _export(x):
@@ -142,24 +145,29 @@ class Widget(Scope):
     def height(self, k, value):
         return self._resolve_sizing(k, value)
 
-    def _resolve_directional(self, dir_, value):
+    def _resolve_directional(self, dir_, len_name, value):
         if value == 'start':
+            from . import display
+            
+            if isinstance(self.parent_widget, display.Display):
+                return self.parent_widget.get_processed(dir_)
+            
             return 0
         elif value == 'center':
             return (
-                self.parent_widget.get_processed(dir_) / 2
-                - self.get_processed(dir_) / 2
+                self.parent_widget.get_processed(len_name) / 2
+                - self.get_processed(len_name) / 2
             )
         elif value == 'end':
             return (
-                self.parent_widget.get_processed(dir_)
-                - self.get_processed(dir_)
+                self.parent_widget.get_processed(len_name)
+                - self.get_processed(len_name)
             )
 
     @customizer('start', alias='x')
     def horizontal(self, k, value):
-        return self._resolve_directional('width', value)
+        return self._resolve_directional(k, 'width', value)
 
     @customizer('start', alias='y')
     def vertical(self, k, value):
-        return self._resolve_directional('height', value)
+        return self._resolve_directional(k, 'height', value)
