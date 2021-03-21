@@ -14,7 +14,7 @@ class Unit(Scope):
             v.process_all()
 
     def export(self):
-        return {str(self): {k: v.export() for k, v in self.widgets.items()}}
+        return {k: v.export() for k, v in self.widgets.items()}
 
     def add_widget(self, name, *args, **kwargs):
         widget = self.make_widget(name, *args, **kwargs)

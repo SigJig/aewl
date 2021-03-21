@@ -10,15 +10,19 @@ widget capture_progress(group_widget) {
 
     children = [
         widget points(group_widget) {
-            width = 100;
-
             children = [
                 widget attackers(text_widget) {
-                    size = $point_size;
+                    width = $point_size;
+                    height = $point_size;
+                    text = "0";
                     font = "PuristaLight";
                     horizontal = "start";
                 },
                 widget defenders(text_widget) {
+                    width = $point_size;
+                    height = $point_size;
+                    text = "0";
+                    font = "PuristaLight";
                     horizontal = "end";
                 }
             ];
@@ -28,9 +32,7 @@ widget capture_progress(group_widget) {
             width = $bar_width;
 
             children = [
-                widget bar(progress_widget) {
-                    
-                },
+                widget bar(progress_widget) {},
                 widget text(text_widget) {
                     height = 3;
                     text = "Setting up";

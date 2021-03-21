@@ -1,3 +1,4 @@
 
-from .base import Widget, Display
+from .base import Widget
+from .display import Display
 from .group import *

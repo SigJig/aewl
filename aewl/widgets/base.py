@@ -6,7 +6,12 @@ from ..utils import inheritors
 from ..helpers import (
     PixelH,
     PixelW,
-    Percentage
+    Percentage,
+    SafeZoneW,
+    SafeZoneH,
+    SafeZoneX,
+    SafeZoneY,
+    PixelGrid
 )
 
 def customizer(default, alias=None):
@@ -93,8 +98,9 @@ class Widget(Scope):
         
         out = {}
         for val in self.processed.values():
-            for k, v in val.items():
-                out[k] = _export(v)
+            k, v = next(iter(val.items()))
+
+            out[k] = _export(v)
         
         return out
 
@@ -120,19 +126,19 @@ class Widget(Scope):
             if self.parent_widget is None:
                 raise Exception('no parent')
 
-            self.parent_widget.get_processed(dir_) * (val / 100)
+            return self.parent_widget.get_processed(dir_) * (val / 100)
         elif dir_ == 'width':
-            return PixelW(val)
+            return PixelGrid.pixel_w(val)
         elif dir_ == 'height':
-            return PixelH(val)
+            return PixelGrid.pixel_h(val)
         else:
             raise Exception('BRO????')
 
-    @customizer(0, alias='w')
+    @customizer(Percentage(100), alias='w')
     def width(self, k, value):
         return self._resolve_sizing(k, value)
 
-    @customizer(0, alias='h')
+    @customizer(Percentage(100), alias='h')
     def height(self, k, value):
         return self._resolve_sizing(k, value)
 
@@ -157,5 +163,3 @@ class Widget(Scope):
     @customizer('start', alias='y')
     def vertical(self, k, value):
         return self._resolve_directional('height', value)
-
-class Display(Widget): pass
