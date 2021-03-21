@@ -18,7 +18,7 @@ widget capture_progress(group_widget) {
                     font = "PuristaLight";
                     horizontal = "start";
                 },
-                widget defenders(attackers) {
+                widget defenders(text_widget) {
                     horizontal = "end";
                 }
             ];

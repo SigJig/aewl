@@ -1,20 +1,19 @@
 
 from collections import defaultdict
 from scope import Scope
-
-class _Meta(type):
-    def __new__(cls, name, bases, attrs):
-        pass
+from utils import inheritors
 
 class Widget(Scope):
-    class __metaclass__(type):
-        __inheritors__ = defaultdict(list)
+    @classmethod
+    def create(cls, type_, *args, **kwargs):
+        if type_ is None:
+            return cls(*args, **kwargs)
 
-        def __new__(meta, name, bases, dct):
-            klass = type.__new__(meta, name, bases, dct)
-            for base in klass.mro()[1:-1]:
-                meta.__inheritors__[base].append(klass)
-            return klass
+        for t in inheritors(cls):
+            if getattr(t, 'name', None) == type_:
+                return t(*args, **kwargs)
+
+        raise Exception('widget type {} not found'.format(type_))
 
     def __init__(self, name, inherits=[], parent=None):
         self.name = name

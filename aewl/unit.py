@@ -20,18 +20,22 @@ class Unit(Scope):
 
     def make_widget(self, name, inherits=[], is_display=False):
         inherits_wdg = []
+        base_type = None
 
         for i in inherits:
             wdg = self.get_widget(i)
 
             if wdg is None:
-                raise Exception('Attempted inherit not found (%s)' % i)
+                if base_type is not None:
+                    raise Exception('Attempted inherit not found (%s)' % i)
+
+                base_type = i
 
             inherits_wdg.append(wdg)
 
         type_ = Widget if not is_display else Display
 
-        return type_(name, inherits_wdg, self)
+        return type_.create(base_type, name, inherits_wdg, self)
 
     def get_widget(self, name):
         if name in self.widgets:
