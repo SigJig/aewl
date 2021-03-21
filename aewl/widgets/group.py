@@ -2,10 +2,10 @@
 from .base import Widget
 
 class Group(Widget):
-    name = 'group_widget'
+    raw_name = 'group_widget'
 
 class Text(Widget):
-    name = 'text_widget'
+    raw_name = 'text_widget'
 
 class Progress(Widget):
-    name = 'progress_widget'
+    raw_name = 'progress_widget'

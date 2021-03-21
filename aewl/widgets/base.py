@@ -10,17 +10,17 @@ class Widget(Scope):
             return cls(*args, **kwargs)
 
         for t in inheritors(cls):
-            if getattr(t, 'name', None) == type_:
+            if getattr(t, 'raw_name', None) == type_:
                 return t(*args, **kwargs)
 
         raise Exception('widget type {} not found'.format(type_))
 
     def __init__(self, name, inherits=[], parent_scope=None):
-        self.name = name
+        super().__init__(name=name, parent_scope=parent_scope)
+
         self.inherits = inherits
         self.properties = {}
 
-        super().__init__(name=name, parent_scope=parent_scope)
 
     def export(self):
         def _export(x):
