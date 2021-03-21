@@ -11,23 +11,17 @@ from ..helpers import (
 
 def customizer(default, alias=None):
     def wrapper(func):
-        func.is_customizer = True
-        if isinstance(default, collections.Callable):
-            func.default = default
-        else:
-            def _d(*args, **kwargs):
-                return default
-
-            func.default = _d
-
         @functools.wraps(func)
         def call(self, k, *args, **kwargs):
             result = func(self, k, *args, **kwargs)
-
+            
             if alias is not None:
                 return {alias: result}
             
             return {k: result}
+
+        call.is_customizer = True
+        call.default = default
 
         return call
     return wrapper
@@ -61,12 +55,10 @@ class Widget(Scope):
         self.processed[k] = {k: v}
 
     def get_processed(self, k):
-        if k in self.processed:
-            return self.processed[k]
-        else:
+        if k not in self.processed:
             self.process(k, self.properties.get(k, None))
 
-            return self.processed[k]
+        return next(iter(self.processed[k].values()))
 
     def process(self, k, v=None):
         try:
@@ -78,7 +70,7 @@ class Widget(Scope):
             self.default(k, v)
         else:
             if v is None:
-                meth = meth.default
+                v = meth.default
 
             result = meth(k, v)
 
@@ -119,6 +111,7 @@ class Widget(Scope):
             raise
 
     def make_widget(self, *args, **kwargs):
+        kwargs.setdefault('parent_widget', self)
         return self.parent_scope.make_widget(*args, **kwargs)
 
 
@@ -135,12 +128,34 @@ class Widget(Scope):
         else:
             raise Exception('BRO????')
 
-    @customizer(PixelW(0), alias='w')
+    @customizer(0, alias='w')
     def width(self, k, value):
         return self._resolve_sizing(k, value)
 
-    @customizer(PixelH(0), alias='h')
+    @customizer(0, alias='h')
     def height(self, k, value):
         return self._resolve_sizing(k, value)
+
+    def _resolve_directional(self, dir_, value):
+        if value == 'start':
+            return 0
+        elif value == 'center':
+            return (
+                self.parent_widget.get_processed(dir_) / 2
+                - self.get_processed(dir_) / 2
+            )
+        elif value == 'end':
+            return (
+                self.parent_widget.get_processed(dir_)
+                - self.get_processed(dir_)
+            )
+
+    @customizer('start', alias='x')
+    def horizontal(self, k, value):
+        return self._resolve_directional('width', value)
+
+    @customizer('start', alias='y')
+    def vertical(self, k, value):
+        return self._resolve_directional('height', value)
 
 class Display(Widget): pass

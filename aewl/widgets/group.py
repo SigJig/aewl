@@ -4,7 +4,7 @@ from .base import Widget, customizer
 class Group(Widget):
     raw_name = 'group_widget'
 
-    @customizer({}, alias='controls')
+    @customizer([], alias='controls')
     def children(self, k, body):
         if not isinstance(body, list):
             raise TypeError('Expected list, got {}'.format(type(body)))

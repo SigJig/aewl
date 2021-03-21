@@ -22,7 +22,7 @@ class Unit(Scope):
 
         return widget
 
-    def make_widget(self, name, inherits=[], is_display=False):
+    def make_widget(self, name, inherits=[], is_display=False, parent_widget=None):
         inherits_wdg = []
         base_type = None
 
@@ -39,7 +39,7 @@ class Unit(Scope):
 
         type_ = Widget if not is_display else Display
 
-        return type_.create(base_type, name, inherits_wdg, self)
+        return type_.create(base_type, name, inherits_wdg, parent_widget or self)
 
     def get_widget(self, name):
         if name in self.widgets:
