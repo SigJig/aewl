@@ -6,9 +6,9 @@ from lark import (
     Tree
 )
 
-from unit import Unit
-from helpers import Percentage
-from widgets import Widget
+from .unit import Unit
+from .helpers import Percentage
+from .widgets import Widget
 
 GRAMMAR_FILE = 'aewl/grammar.lark'
 
@@ -105,9 +105,3 @@ def parse(src, name):
 
     return unit
 
-
-if __name__ == '__main__':
-    import json
-
-    with open('example') as fp:
-        print(json.dumps(parse(fp.read(), fp.name).export(), indent=4))

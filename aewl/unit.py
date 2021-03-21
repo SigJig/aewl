@@ -1,6 +1,6 @@
 
-from scope import Scope
-from widgets import Widget, Display
+from .scope import Scope
+from .widgets import Widget, Display
 
 class Unit(Scope):
     def __init__(self, name):
@@ -8,6 +8,10 @@ class Unit(Scope):
         self.widgets = {}
 
         super().__init__(name)
+
+    def process_all(self):
+        for v in self.widgets.values():
+            v.process_all()
 
     def export(self):
         return {str(self): {k: v.export() for k, v in self.widgets.items()}}

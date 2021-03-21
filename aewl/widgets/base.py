@@ -1,7 +1,17 @@
 
 from collections import defaultdict
-from scope import Scope
-from utils import inheritors
+from ..scope import Scope
+from ..utils import inheritors
+from ..helpers import (
+    PixelH,
+    PixelW,
+    Percentage
+)
+
+def customizer(func):
+    func.is_customizer = True
+
+    return func
 
 class Widget(Scope):
     @classmethod
@@ -20,7 +30,30 @@ class Widget(Scope):
 
         self.inherits = inherits
         self.properties = {}
+        self.output = {}
 
+        if not isinstance(self.parent_scope, Widget):
+            self.parent_widget = None
+        else:
+            self.parent_widget = parent_scope
+
+    def default(self, k, v):
+        self.output[k] = v
+
+    def process(self, k, v):
+        meth = getattr(self, k, self.default)
+
+        if not getattr(meth, 'is_customizer', False):
+            meth = self.default
+        
+        response = meth(k, v)
+
+        if response is not None:
+            self.output[k] = response
+
+    def process_all(self):
+        for k, v in self.properties.items():
+            self.process(k, v)
 
     def export(self):
         def _export(x):
@@ -48,5 +81,32 @@ class Widget(Scope):
     def make_widget(self, *args, **kwargs):
         return self.parent_scope.make_widget(*args, **kwargs)
 
-class Display(Widget):
-    pass
+
+    def _resolve_sizing(self, dir_, val):
+        if isinstance(val, Percentage):
+            if self.parent_widget is None:
+                raise Exception('no parent')
+
+            raise Exception('calm down cunt i havent implemented this yet')
+            #return getattr(self.parent_widget, dir_)() * (val / 100)
+        elif dir_ == 'width':
+            return PixelW(val)
+        elif dir_ == 'height':
+            return PixelH(val)
+        else:
+            raise Exception('BRO????')
+
+    @customizer
+    def width(self, k, value):
+        return self._resolve_sizing(k, value)
+
+    @customizer
+    def height(self, k, value):
+        return self._resolve_sizing(k, value)
+
+    @customizer
+    def size(self, k, value):
+        self.output['width'] = self.width('width', value)
+        self.output['height'] = self.height('height', value)
+
+class Display(Widget): pass
