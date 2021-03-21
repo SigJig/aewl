@@ -6,5 +6,4 @@ with open('example') as fp:
     un = parse(fp.read(), fp.name)
     un.process_all()
     
-    pass
-    #print(json.dumps(, indent=4))
+    print(json.dumps(un.export(), indent=4))

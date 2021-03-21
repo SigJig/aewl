@@ -7,7 +7,7 @@ class PixelH(float):
         return str(self)
 
     def export(self):
-        return '({} * pixelH * pixelGrid)'.format(self)
+        return '({} * pixelH * pixelGrid)'.format(float(self))
 
 class PixelW(float):
     def __str__(self):
@@ -17,6 +17,6 @@ class PixelW(float):
         return str(self)
 
     def export(self):
-        return '({} * pixelW * pixelGrid)'.format(self)
+        return '({} * pixelW * pixelGrid)'.format(float(self))
 
 class Percentage(float): pass

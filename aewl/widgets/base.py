@@ -1,5 +1,6 @@
 
-from collections import defaultdict
+import functools
+import collections
 from ..scope import Scope
 from ..utils import inheritors
 from ..helpers import (
@@ -8,10 +9,28 @@ from ..helpers import (
     Percentage
 )
 
-def customizer(func):
-    func.is_customizer = True
+def customizer(default, alias=None):
+    def wrapper(func):
+        func.is_customizer = True
+        if isinstance(default, collections.Callable):
+            func.default = default
+        else:
+            def _d(*args, **kwargs):
+                return default
 
-    return func
+            func.default = _d
+
+        @functools.wraps(func)
+        def call(self, k, *args, **kwargs):
+            result = func(self, k, *args, **kwargs)
+
+            if alias is not None:
+                return {alias: result}
+            
+            return {k: result}
+
+        return call
+    return wrapper
 
 class Widget(Scope):
     @classmethod
@@ -30,7 +49,7 @@ class Widget(Scope):
 
         self.inherits = inherits
         self.properties = {}
-        self.output = {}
+        self.processed = {}
 
         if not isinstance(self.parent_scope, Widget):
             self.parent_widget = None
@@ -38,18 +57,32 @@ class Widget(Scope):
             self.parent_widget = parent_scope
 
     def default(self, k, v):
-        self.output[k] = v
+        # TODO: Add warning
+        self.processed[k] = {k: v}
 
-    def process(self, k, v):
-        meth = getattr(self, k, self.default)
+    def get_processed(self, k):
+        if k in self.processed:
+            return self.processed[k]
+        else:
+            self.process(k, self.properties.get(k, None))
 
-        if not getattr(meth, 'is_customizer', False):
-            meth = self.default
-        
-        response = meth(k, v)
+            return self.processed[k]
 
-        if response is not None:
-            self.output[k] = response
+    def process(self, k, v=None):
+        try:
+            meth = getattr(self, k)
+            
+            if not getattr(meth, 'is_customizer', False):
+                raise AttributeError()
+        except AttributeError:
+            self.default(k, v)
+        else:
+            if v is None:
+                meth = meth.default
+
+            result = meth(k, v)
+
+            self.processed[k] = result
 
     def process_all(self):
         for k, v in self.properties.items():
@@ -59,12 +92,19 @@ class Widget(Scope):
         def _export(x):
             if isinstance(x, list):
                 return [_export(y) for y in x]
+            elif isinstance(x, dict):
+                return {k: _export(v) for k, v in x.items()}
             elif hasattr(x, 'export'):
                 return x.export()
             else:
                 return x
         
-        return {k: _export(v) for k, v in self.properties.items()}
+        out = {}
+        for val in self.processed.values():
+            for k, v in val.items():
+                out[k] = _export(v)
+        
+        return out
 
     def add_property(self, key, value):
         self.properties[key] = value
@@ -87,8 +127,7 @@ class Widget(Scope):
             if self.parent_widget is None:
                 raise Exception('no parent')
 
-            raise Exception('calm down cunt i havent implemented this yet')
-            #return getattr(self.parent_widget, dir_)() * (val / 100)
+            self.parent_widget.get_processed(dir_) * (val / 100)
         elif dir_ == 'width':
             return PixelW(val)
         elif dir_ == 'height':
@@ -96,17 +135,12 @@ class Widget(Scope):
         else:
             raise Exception('BRO????')
 
-    @customizer
+    @customizer(PixelW(0), alias='w')
     def width(self, k, value):
         return self._resolve_sizing(k, value)
 
-    @customizer
+    @customizer(PixelH(0), alias='h')
     def height(self, k, value):
         return self._resolve_sizing(k, value)
-
-    @customizer
-    def size(self, k, value):
-        self.output['width'] = self.width('width', value)
-        self.output['height'] = self.height('height', value)
 
 class Display(Widget): pass

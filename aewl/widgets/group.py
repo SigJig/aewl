@@ -4,17 +4,18 @@ from .base import Widget, customizer
 class Group(Widget):
     raw_name = 'group_widget'
 
-    @customizer
+    @customizer({}, alias='controls')
     def children(self, k, body):
         if not isinstance(body, list):
             raise TypeError('Expected list, got {}'.format(type(body)))
 
-        if 'controls' not in self.output:
-            self.output['controls'] = {}
+        results = {}
 
         for x in body:
             x.process_all()
-            self.output['controls'][x.name] = x
+            results[x.name] = x
+
+        return results
 
 class Text(Widget):
     raw_name = 'text_widget'
