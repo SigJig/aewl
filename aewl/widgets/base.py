@@ -15,12 +15,12 @@ class Widget(Scope):
 
         raise Exception('widget type {} not found'.format(type_))
 
-    def __init__(self, name, inherits=[], parent=None):
+    def __init__(self, name, inherits=[], parent_scope=None):
         self.name = name
         self.inherits = inherits
         self.properties = {}
 
-        super().__init__(name=name, parent=parent)
+        super().__init__(name=name, parent_scope=parent_scope)
 
     def export(self):
         def _export(x):
@@ -40,13 +40,13 @@ class Widget(Scope):
         try:
             return self.properties[key]
         except KeyError:
-            if isinstance(self.parent, Widget):
-                return self.parent.get_property(key)
+            if isinstance(self.parent_scope, Widget):
+                return self.parent_scope.get_property(key)
 
             raise
 
     def make_widget(self, *args, **kwargs):
-        return self.parent.make_widget(*args, **kwargs)
+        return self.parent_scope.make_widget(*args, **kwargs)
 
 class Display(Widget):
     pass

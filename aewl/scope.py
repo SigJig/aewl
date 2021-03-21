@@ -1,9 +1,9 @@
 
 class Scope:
-    def __init__(self, name, parent=None):
+    def __init__(self, name, parent_scope=None):
         self.name = name
         self.variables = {}
-        self.parent = parent
+        self.parent_scope = parent_scope
 
     def __str__(self):
         return self.name
@@ -15,7 +15,7 @@ class Scope:
         try:
             return self.variables[key]
         except KeyError:
-            if self.parent is not None:
-                return self.parent.get_variable(key)
+            if self.parent_scope is not None:
+                return self.parent_scope.get_variable(key)
             
             raise
