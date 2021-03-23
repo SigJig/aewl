@@ -13,6 +13,11 @@ BODYNAME = 'aewl_body'
 BODYNAME_BACKGROUND = 'aewl_body_background'
 
 class Display(Widget):
+    # Skip x y w h, as it does nothing on a display
+    # Might change it later so that only props in
+    # a whitelist array are passed instead.
+    blacklist_props = ['x', 'y', 'w', 'h']
+
     def _resolve_sizing(self, dir_, val):
         if isinstance(val, Percentage):
             val = val / 100
@@ -63,3 +68,7 @@ class Display(Widget):
     def body_background(self, k, body):
         return {
             BODYNAME_BACKGROUND: self._layer_group(BODYNAME_BACKGROUND, body)}
+
+    @customizer(-1, alias='idd')
+    def id(self, k, value):
+        return value

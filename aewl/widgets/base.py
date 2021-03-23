@@ -49,6 +49,7 @@ class Widget(Scope):
         self.inherits = inherits
         self.properties = {}
         self.processed = {}
+        self.blacklist_props = []
 
         if not isinstance(self.parent_scope, Widget):
             self.parent_widget = None
@@ -86,7 +87,12 @@ class Widget(Scope):
             method = getattr(self, attr)
 
             if getattr(method, 'is_customizer', False):
-                self.process(attr, self.properties.get(attr, None))
+                try:
+                    prop = self.get_property(attr)
+                except KeyError:
+                    prop = None
+
+                self.process(attr, prop)
 
     def export(self):
         def _export(x):
@@ -101,9 +107,12 @@ class Widget(Scope):
         
         out = {}
         for val in self.processed.values():
-            k, v = next(iter(val.items()))
+            ek, ev = next(iter(val.items()))
 
-            out[k] = _export(v)
+            if ek in getattr(type(self), 'blacklist_props', []):
+                continue
+
+            out[ek] = _export(ev)
         
         return out
 
@@ -171,3 +180,7 @@ class Widget(Scope):
     @customizer('start', alias='y')
     def vertical(self, k, value):
         return self._resolve_directional(k, 'height', value)
+
+    @customizer(-1, alias='idc')
+    def id(self, k, value):
+        return value
