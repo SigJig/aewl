@@ -11,7 +11,7 @@ def get_styles():
         # so by the time parsing begins they are all defined
         # therefore we dont need to iterate over everything
         # as that needs to be done in a very specific way
-        parser.parse()
+        next(parser.parse())
 
         for k, v in parser._scanner.stream.preprocessor.defined.items():
             print(k, ''.join(v.resolve(parser._scanner.stream)))
