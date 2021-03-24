@@ -1,8 +1,9 @@
 
 import json
 from collections import defaultdict
-from armaconfig import loads
+from armaconfig import loads, load, dump
 from armaconfig.entry import EOL
+from armaconfig.config import Config
 from armaconfig.analyse import Parser
 
 def get_styles():
@@ -32,5 +33,40 @@ def get_styles():
                     wp.write('{} = {}\n'.format(k, str(v)))
 
 
+def remove_redundant():
+    def _to_dict(conf):
+        return {k: basic[k] for k in basic}
 
-get_styles()
+    def _remove(conf, check, out=defaultdict(dict)):
+        for name, v in conf:
+            if name not in check:
+                if isinstance(v, Config):
+                    v = _remove(_to_dict(v).items(), check)
+
+                out[k][name] = v
+
+        return out
+
+
+    with open('tools/definitions.hpp') as fp:
+        loaded = load(fp)
+        basic = None
+
+        for k in iter(loaded):
+            if k == '_basics':
+                basic = loaded[k]
+                break
+        else:
+            raise Exception('HEY!')
+
+        out = defaultdict(dict, {'_basics': _to_dict(basic)})
+        cur = {}
+
+        for k in loaded:
+            cur = {**cur, **_remove(loaded[k].items(), basic)}
+        
+        with open('tools/definitions_new.hpp', 'w') as wp:
+            dump(cur, wp, indent=4)
+
+
+remove_redundant()

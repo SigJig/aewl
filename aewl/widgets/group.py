@@ -17,8 +17,5 @@ class Group(Widget):
 
         return results
 
-class Text(Widget):
-    raw_name = 'text_widget'
-
 class Progress(Widget):
     raw_name = 'progress_widget'

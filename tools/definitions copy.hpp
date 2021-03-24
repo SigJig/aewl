@@ -124,13 +124,6 @@ class _basics
 	fixedWidth = 0;
 	font = "RobotoCondensed";
 	linespacing = 1;
-	deletable = 0;
-	fade = 0;
-	access = 0;
-	x = 0;
-	y = 0;
-	w = 0.3;
-	h = 0.3;
 };
 
 class RscText
@@ -327,6 +320,9 @@ class RscCombo
 };
 class RscListBox
 {
+	deletable = 0;
+	fade = 0;
+	access = 0;
 	type = 5;
 	rowHeight = 0;
 	colorText[] = 
@@ -498,6 +494,10 @@ class RscListBox
 		0,
 		0.5
 	};
+	x = 0;
+	y = 0;
+	w = 0.3;
+	h = 0.3;
 	style = 16;
 	font = "RobotoCondensed";
 	sizeEx = "(((((safezoneW / safezoneH) min 1.2) / 1.2) / 25) * 1)";

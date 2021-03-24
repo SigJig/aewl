@@ -32,6 +32,8 @@ def customizer(default, alias=None):
     return wrapper
 
 class Widget(Scope):
+    raw_name = 'basic_widget'
+
     @classmethod
     def create(cls, type_, *args, **kwargs):
         if type_ is None:
