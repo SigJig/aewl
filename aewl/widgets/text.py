@@ -2,4 +2,4 @@
 from .base import Widget
 
 class Text(Widget):
-    raw_name = 'text_widget'
+    raw_name = 'text'

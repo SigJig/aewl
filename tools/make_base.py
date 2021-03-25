@@ -1,4 +1,5 @@
 
+import re
 import json
 from collections import defaultdict
 from armaconfig import loads, load, dump
@@ -33,12 +34,12 @@ def get_styles():
                     wp.write('{} = {}\n'.format(k, str(v)))
 
 
-def remove_redundant():
+def dump_configs():
     with open('tools/definitions.hpp') as fp:
         loaded = load(fp)
         basic = None
 
-        for k in loaded:
+        for k in iter(loaded):
             if basic is None:
                 if k == '_basics':
                     basic = loaded[k]
@@ -53,8 +54,23 @@ def remove_redundant():
                 if ck in basic:
                     conf.pop(ck)
 
-        with open('tools/definitions_new.hpp', 'w') as wp:
+            if 'type' in conf:
+                conf.add_inherits('_basics') # adds only to rscs
+
+            conf.name = re.sub(r'^Rsc(\w+)$', lambda x: x.group(1), conf.name)
+            conf.name = conf.name.lower()
+
+        with open('tools/configs.githide.hpp', 'w') as wp:
+            """ dct = {}
+
+            for k in iter(loaded):
+                if 'type' not in loaded[k]:
+                    continue # skip things like attributes
+
+                n = re.sub(r'^rsc(\w+)$', lambda x: x.group(1).lower(), k)
+
+                dct[n] = loaded[k].to_dict()
+            """
             dump(loaded, wp, indent=4)
 
-
-remove_redundant()
+dump_configs()

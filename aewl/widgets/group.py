@@ -2,7 +2,7 @@
 from .base import Widget, customizer
 
 class Group(Widget):
-    raw_name = 'group_widget'
+    raw_name = 'group'
 
     @customizer([], alias='controls')
     def children(self, k, body):
@@ -18,4 +18,4 @@ class Group(Widget):
         return results
 
 class Progress(Widget):
-    raw_name = 'progress_widget'
+    raw_name = 'progress'

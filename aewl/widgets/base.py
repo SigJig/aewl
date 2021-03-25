@@ -32,7 +32,7 @@ def customizer(default, alias=None):
     return wrapper
 
 class Widget(Scope):
-    raw_name = 'basic_widget'
+    raw_name = 'basic'
 
     @classmethod
     def create(cls, type_, *args, **kwargs):
