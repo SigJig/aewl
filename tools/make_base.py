@@ -34,20 +34,6 @@ def get_styles():
 
 
 def remove_redundant():
-    def _to_dict(conf):
-        return {k: basic[k] for k in basic}
-
-    def _remove(conf, check, out=defaultdict(dict)):
-        for name, v in conf:
-            if name not in check:
-                if isinstance(v, Config):
-                    v = _to_dict(v) # _remove(_to_dict(v).items(), check)
-
-                out[k][name] = v
-
-        return out
-
-
     with open('tools/definitions.hpp') as fp:
         loaded = load(fp)
         basic = None
