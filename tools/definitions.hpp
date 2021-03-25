@@ -131,199 +131,456 @@ class _basics
 	y = 0;
 	w = 0.3;
 	h = 0.3;
+	idc = -1;
+	default = 0;
+	blinkingPeriod = 0;
+	moving = 0;
 };
 
-class RscText
-{	
-	type = CT_STATIC;
-	style = ST_LEFT + ST_MULTI;
-	sizeEx = 0;
-};
-class StructuredTextAttr
-{
-	font = "PuristaMedium";
-	color = "#ffffff";
-	colorLink = "#D09B43";
-	align = "left";
-	shadow = 1;
-};
-class RscStructuredText
-{
-	type = CT_STRUCTURED_TEXT;
-	class Attributes : StructuredTextAttr {};
-	size = "(((((safezoneW / safezoneH) min 1.2) / 1.2) / 25) * 1)";
-};
-class RscPicture
-{
-	style = 48;
-};
-class RscEdit
-{
-	type = 2;
-	autocomplete = "";
-	size = 0.2;
-	style = "0x00 + 0x40";
-	sizeEx = "(((((safezoneW / safezoneH) min 1.2) / 1.2) / 25) * 1)";
-	canModify = 1;
-};
-class RscCombo
-{
-	type = 4;
-	colorSelect[] = 
-	{
-		0,
-		0,
-		0,
-		1
-	};
-	colorScrollbar[] = 
-	{
-		1,
-		0,
-		0,
-		1
-	};
-	colorDisabled[] = 
-	{
-		1,
-		1,
-		1,
-		0.25
-	};
-	colorPicture[] = 
-	{
-		1,
-		1,
-		1,
-		1
-	};
-	colorPictureSelected[] = 
-	{
-		1,
-		1,
-		1,
-		1
-	};
-	colorPictureDisabled[] = 
-	{
-		1,
-		1,
-		1,
-		0.25
-	};
-	colorPictureRight[] = 
-	{
-		1,
-		1,
-		1,
-		1
-	};
-	colorPictureRightSelected[] = 
-	{
-		1,
-		1,
-		1,
-		1
-	};
-	colorPictureRightDisabled[] = 
-	{
-		1,
-		1,
-		1,
-		0.25
-	};
-	colorTextRight[] = 
-	{
-		1,
-		1,
-		1,
-		1
-	};
-	colorSelectRight[] = 
-	{
-		0,
-		0,
-		0,
-		1
-	};
-	colorSelect2Right[] = 
-	{
-		0,
-		0,
-		0,
-		1
-	};
-	tooltipColorText[] = 
-	{
-		1,
-		1,
-		1,
-		1
-	};
-	tooltipColorBox[] = 
-	{
-		1,
-		1,
-		1,
-		1
-	};
-	tooltipColorShade[] = 
-	{
-		0,
-		0,
-		0,
-		0.65
-	};
-	soundSelect[] = 
-	{
-		"\A3\ui_f\data\sound\RscCombo\soundSelect",
-		0.1,
-		1
-	};
-	soundExpand[] = 
-	{
-		"\A3\ui_f\data\sound\RscCombo\soundExpand",
-		0.1,
-		1
-	};
-	soundCollapse[] = 
-	{
-		"\A3\ui_f\data\sound\RscCombo\soundCollapse",
-		0.1,
-		1
-	};
-	maxHistoryDelay = 1;
-	class ComboScrollBar
-	{
-		color[] = 
-		{
-			1,
-			1,
-			1,
-			1
-		};
-	};
-	colorSelectBackground[] = 
-	{
-		1,
-		1,
-		1,
-		0.7
-	};
-	colorActive[] = 
-	{
-		1,
-		0,
-		0,
-		1
-	};
-	style = "0x10 + 0x200";
-	font = "RobotoCondensed";
-	sizeEx = "(((((safezoneW / safezoneH) min 1.2) / 1.2) / 25) * 1)";
-	shadow = 0;
-	arrowEmpty = "\A3\ui_f\data\GUI\RscCommon\rsccombo\arrow_combo_ca.paa";
-	arrowFull = "\A3\ui_f\data\GUI\RscCommon\rsccombo\arrow_combo_active_ca.paa";
-	wholeHeight = 0.45;
+class RscText2			
+ 	{
+ 		access = 0;
+ 			idc = CT_STATIC;
+ 			type = CT_STATIC;
+ 			style = ST_LEFT + ST_MULTI;
+
+ 			x = 1 * GUI_GRID_CENTER_W + GUI_GRID_CENTER_X;
+ 			y = 1 * GUI_GRID_CENTER_H + GUI_GRID_CENTER_Y;
+ 			w = 10 * GUI_GRID_CENTER_W;
+ 			h = 1 * GUI_GRID_CENTER_H;
+
+ 			colorBackground[] = {0,0,0,0};
+
+ 			text = "CT_STATIC";
+ 			sizeEx = GUI_GRID_CENTER_H;
+ 			font = GUI_FONT_NORMAL;
+ 			shadow = 0; // Shadow (0 - none, 1 - directional, color affected by colorShadow, 2 - black outline)
+ 			lineSpacing = 1;
+ 			fixedWidth = 1;
+ 			colorText[] = {1,1,1,1};
+ 			colorShadow[] = {0,0,0,0.5};
+
+
+
+ 			autoplay = 0;
+ 			loops = 0;
+
+ 			tileW = 1;
+ 			tileH = 1;
+
+ 			onCanDestroy = "";
+ 			onDestroy = "";
+ 			onMouseEnter = "";
+ 			onMouseExit = "";
+ 			onSetFocus = "";
+ 			onKillFocus = "";
+ 			onKeyDown = "";
+ 			onKeyUp = "";
+ 			onMouseButtonDown = "";
+ 			onMouseButtonUp = "";
+ 			onMouseButtonClick = "";
+ 			onMouseButtonDblClick = "";
+ 			onMouseZChanged = "";
+ 			onMouseMoving = "";
+ 			onMouseHolding = "";
+
+ 			onVideoStopped = "";
+ 	};	//end: RscText class
+
+ class RscText
+ {	
+ 	type = CT_STATIC;
+ 	style = ST_LEFT + ST_MULTI;
+ 	deletable = 0;
+ 	fade = 0;
+ 	access = 0;
+ 	idc = -1;
+ 	colorBackground[] = 
+ 	{
+ 		0,
+ 		0,
+ 		0,
+ 		0
+ 	};
+ 	colorText[] = 
+ 	{
+ 		1,
+ 		1,
+ 		1,
+ 		1
+ 	};
+ 	text = "";
+ 	fixedWidth = 0;
+ 	colorShadow[] = 
+ 	{
+ 		0,
+ 		0,
+ 		0,
+ 		0.5
+ 	};
+ 	tooltipColorText[] = 
+ 	{
+ 		1,
+ 		1,
+ 		1,
+ 		1
+ 	};
+ 	tooltipColorBox[] = 
+ 	{
+ 		1,
+ 		1,
+ 		1,
+ 		1
+ 	};
+ 	tooltipColorShade[] = 
+ 	{
+ 		0,
+ 		0,
+ 		0,
+ 		0.65
+ 	};
+ 	x = 0;
+ 	y = 0;
+ 	h = 0.037;
+ 	w = 0.3;
+ 	shadow = 0;
+ 	font = "RobotoCondensed";
+ 	SizeEx = "(((((safezoneW / safezoneH) min 1.2) / 1.2) / 25) * 1)";
+ 	linespacing = 1;
+ };
+ class StructuredTextAttr
+ {
+ 	font = "PuristaMedium";
+ 	color = "#ffffff";
+ 	colorLink = "#D09B43";
+ 	align = "left";
+ 	shadow = 1;
+ };
+ class RscStructuredText
+ {
+ 	deletable = 0;
+ 	fade = 0;
+ 	access = 0;
+ 	type = 13;
+ 	idc = -1;
+ 	style = 0;
+ 	colorText[] = 
+ 	{
+ 		1,
+ 		1,
+ 		1,
+ 		1
+ 	};
+ 	class Attributes : StructuredTextAttr {};
+ 	x = 0;
+ 	y = 0;
+ 	h = 0.035;
+ 	w = 0.1;
+ 	text = "";
+ 	size = "(((((safezoneW / safezoneH) min 1.2) / 1.2) / 25) * 1)";
+ 	shadow = 1;
+ };
+ class RscPicture
+ {
+ 	deletable = 0;
+ 	fade = 0;
+ 	access = 0;
+ 	type = 0;
+ 	idc = -1;
+ 	style = 48;
+ 	colorBackground[] = 
+ 	{
+ 		0,
+ 		0,
+ 		0,
+ 		0
+ 	};
+ 	colorText[] = 
+ 	{
+ 		1,
+ 		1,
+ 		1,
+ 		1
+ 	};
+ 	font = "TahomaB";
+ 	sizeEx = 0;
+ 	lineSpacing = 0;
+ 	text = "";
+ 	fixedWidth = 0;
+ 	tooltipColorText[] = 
+ 	{
+ 		1,
+ 		1,
+ 		1,
+ 		1
+ 	};
+ 	tooltipColorBox[] = 
+ 	{
+ 		1,
+ 		1,
+ 		1,
+ 		1
+ 	};
+ 	tooltipColorShade[] = 
+ 	{
+ 		0,
+ 		0,
+ 		0,
+ 		0.65
+ 	};
+ 	shadow = 0;
+ 	x = 0;
+ 	y = 0;
+ 	w = 0.2;
+ 	h = 0.15;
+ };
+ class RscEdit
+ {
+ 	deletable = 0;
+ 	fade = 0;
+ 	access = 0;
+ 	type = 2;
+ 	x = 0;
+ 	y = 0;
+ 	h = 0.04;
+ 	w = 0.2;
+ 	colorBackground[] = 
+ 	{
+ 		0,
+ 		0,
+ 		0,
+ 		0
+ 	};
+ 	colorText[] = 
+ 	{
+ 		0.95,
+ 		0.95,
+ 		0.95,
+ 		1
+ 	};
+ 	colorDisabled[] = 
+ 	{
+ 		1,
+ 		1,
+ 		1,
+ 		0.25
+ 	};
+ 	colorSelection[] = 
+ 	{
+ 		"(profilenamespace getvariable ['GUI_BCG_RGB_R',0.13])",
+ 		"(profilenamespace getvariable ['GUI_BCG_RGB_G',0.54])",
+ 		"(profilenamespace getvariable ['GUI_BCG_RGB_B',0.21])",
+ 		1
+ 	};
+ 	autocomplete = "";
+ 	text = "";
+ 	size = 0.2;
+ 	tooltipColorText[] = 
+ 	{
+ 		1,
+ 		1,
+ 		1,
+ 		1
+ 	};
+ 	tooltipColorBox[] = 
+ 	{
+ 		1,
+ 		1,
+ 		1,
+ 		1
+ 	};
+ 	tooltipColorShade[] = 
+ 	{
+ 		0,
+ 		0,
+ 		0,
+ 		0.65
+ 	};
+ 	style = "0x00 + 0x40";
+ 	font = "RobotoCondensed";
+ 	shadow = 2;
+ 	sizeEx = "(((((safezoneW / safezoneH) min 1.2) / 1.2) / 25) * 1)";
+ 	canModify = 1;
+ };
+ class RscCombo
+ {
+ 	deletable = 0;
+ 	fade = 0;
+ 	access = 0;
+ 	type = 4;
+ 	colorSelect[] = 
+ 	{
+ 		0,
+ 		0,
+ 		0,
+ 		1
+ 	};
+ 	colorText[] = 
+ 	{
+ 		1,
+ 		1,
+ 		1,
+ 		1
+ 	};
+ 	colorBackground[] = 
+ 	{
+ 		0,
+ 		0,
+ 		0,
+ 		1
+ 	};
+ 	colorScrollbar[] = 
+ 	{
+ 		1,
+ 		0,
+ 		0,
+ 		1
+ 	};
+ 	colorDisabled[] = 
+ 	{
+ 		1,
+ 		1,
+ 		1,
+ 		0.25
+ 	};
+ 	colorPicture[] = 
+ 	{
+ 		1,
+ 		1,
+ 		1,
+ 		1
+ 	};
+ 	colorPictureSelected[] = 
+ 	{
+ 		1,
+ 		1,
+ 		1,
+ 		1
+ 	};
+ 	colorPictureDisabled[] = 
+ 	{
+ 		1,
+ 		1,
+ 		1,
+ 		0.25
+ 	};
+ 	colorPictureRight[] = 
+ 	{
+ 		1,
+ 		1,
+ 		1,
+ 		1
+ 	};
+ 	colorPictureRightSelected[] = 
+ 	{
+ 		1,
+ 		1,
+ 		1,
+ 		1
+ 	};
+ 	colorPictureRightDisabled[] = 
+ 	{
+ 		1,
+ 		1,
+ 		1,
+ 		0.25
+ 	};
+ 	colorTextRight[] = 
+ 	{
+ 		1,
+ 		1,
+ 		1,
+ 		1
+ 	};
+ 	colorSelectRight[] = 
+ 	{
+ 		0,
+ 		0,
+ 		0,
+ 		1
+ 	};
+ 	colorSelect2Right[] = 
+ 	{
+ 		0,
+ 		0,
+ 		0,
+ 		1
+ 	};
+ 	tooltipColorText[] = 
+ 	{
+ 		1,
+ 		1,
+ 		1,
+ 		1
+ 	};
+ 	tooltipColorBox[] = 
+ 	{
+ 		1,
+ 		1,
+ 		1,
+ 		1
+ 	};
+ 	tooltipColorShade[] = 
+ 	{
+ 		0,
+ 		0,
+ 		0,
+ 		0.65
+ 	};
+ 	soundSelect[] = 
+ 	{
+ 		"\A3\ui_f\data\sound\RscCombo\soundSelect",
+ 		0.1,
+ 		1
+ 	};
+ 	soundExpand[] = 
+ 	{
+ 		"\A3\ui_f\data\sound\RscCombo\soundExpand",
+ 		0.1,
+ 		1
+ 	};
+ 	soundCollapse[] = 
+ 	{
+ 		"\A3\ui_f\data\sound\RscCombo\soundCollapse",
+ 		0.1,
+ 		1
+ 	};
+ 	maxHistoryDelay = 1;
+ 	class ComboScrollBar
+ 	{
+ 		color[] = 
+ 		{
+ 			1,
+ 			1,
+ 			1,
+ 			1
+ 		};
+ 	};
+ 	colorSelectBackground[] = 
+ 	{
+ 		1,
+ 		1,
+ 		1,
+ 		0.7
+ 	};
+ 	colorActive[] = 
+ 	{
+ 		1,
+ 		0,
+ 		0,
+ 		1
+ 	};
+ 	style = "0x10 + 0x200";
+ 	font = "RobotoCondensed";
+ 	sizeEx = "(((((safezoneW / safezoneH) min 1.2) / 1.2) / 25) * 1)";
+ 	shadow = 0;
+ 	x = 0;
+ 	y = 0;
+ 	w = 0.12;
+ 	h = 0.035;
+ 	arrowEmpty = "\A3\ui_f\data\GUI\RscCommon\rsccombo\arrow_combo_ca.paa";
+ 	arrowFull = "\A3\ui_f\data\GUI\RscCommon\rsccombo\arrow_combo_active_ca.paa";
+ 	wholeHeight = 0.45;
 };
 class RscListBox
 {

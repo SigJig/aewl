@@ -41,7 +41,7 @@ def remove_redundant():
         for name, v in conf:
             if name not in check:
                 if isinstance(v, Config):
-                    v = _remove(_to_dict(v).items(), check)
+                    v = _to_dict(v) # _remove(_to_dict(v).items(), check)
 
                 out[k][name] = v
 
@@ -52,21 +52,23 @@ def remove_redundant():
         loaded = load(fp)
         basic = None
 
-        for k in iter(loaded):
-            if k == '_basics':
-                basic = loaded[k]
-                break
-        else:
-            raise Exception('HEY!')
-
-        out = defaultdict(dict, {'_basics': _to_dict(basic)})
-        cur = {}
-
         for k in loaded:
-            cur = {**cur, **_remove(loaded[k].items(), basic)}
-        
+            if basic is None:
+                if k == '_basics':
+                    basic = loaded[k]
+                    continue
+                else:
+                    raise Exception()
+
+            conf = loaded[k]
+            iterator = iter(conf._dict.copy())
+
+            for ck in iterator:
+                if ck in basic:
+                    conf.pop(ck)
+
         with open('tools/definitions_new.hpp', 'w') as wp:
-            dump(cur, wp, indent=4)
+            dump(loaded, wp, indent=4)
 
 
 remove_redundant()
