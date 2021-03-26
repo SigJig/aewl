@@ -89,7 +89,7 @@ class Widget(Scope):
 
     def get_customizers(self):
         return set({x for x in dir(self)
-                        if getattr(getattr(self, x, None), 'is_customizers', False)})
+                        if getattr(getattr(self, x, None), 'is_customizer', False)})
 
     def process_all(self):
         for attr in self.get_customizers().union(self.properties.keys()):

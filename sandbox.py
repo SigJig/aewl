@@ -1,7 +1,7 @@
 
 import json
 from aewl.parser import parse
-from armaconfig import dumps, load
+from armaconfig import dump, load
 
 with open('example') as fp:
     un = parse(fp.read(), fp.name)
@@ -10,4 +10,5 @@ with open('example') as fp:
     with open('tools/configs.githide.hpp') as lp:
         base = load(lp)
     
-    print(dumps(un.export(parent=base), indent=4))
+    with open('out.githide.hpp', 'w') as dp:
+        dump(un.export(parent=base), dp, indent=4)
