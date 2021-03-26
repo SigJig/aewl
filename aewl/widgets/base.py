@@ -25,6 +25,9 @@ def customizer(default, alias=None, optional=False):
         @functools.wraps(func)
         def call(self, k, *args, **kwargs):
             result = func(self, k, *args, **kwargs)
+
+            if result is None:
+                return None
             
             if alias is not None:
                 return make_alias(alias, result)
@@ -91,10 +94,10 @@ class Widget(Scope):
         except AttributeError:
             self.default(k, v)
         else:
-            if v is None:
-                v = meth.default
-
             if v is not None or not meth.optional:
+                if v is None:
+                    v = meth.default
+
                 result = meth(k, v)
 
                 if result is not None:
@@ -228,4 +231,4 @@ class Widget(Scope):
 
         print(horiz, start, value)
 
-        self.processed['horizontal'] = make_alias('x', ((horiz - start) * (value / 100)) + start)
+        self.processed['horizontal'] = make_alias('x', ((horiz - start) * ((100 - value) / 100)) + start)
