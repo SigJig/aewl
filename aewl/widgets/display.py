@@ -56,7 +56,7 @@ class Display(Widget):
         This is so that position can be calculated relative to the display
         """
         group = Group(name, [], self)
-        group.add_property('children', body)
+        group.add_children(body)
         group.process_all()
 
         return group

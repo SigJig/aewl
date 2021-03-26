@@ -5,6 +5,13 @@ class Group(Widget):
     raw_name = 'group'
     base_name = 'aewl_controlsgroupnoscroll'
 
+    def add_children(self, body):
+        for wdg in body:
+            if isinstance(wdg, Widget):
+                wdg.set_parent_widget(self)
+
+        self.add_property('children', body)
+
     @customizer([], alias='controls')
     def children(self, k, body):
         if not isinstance(body, list):

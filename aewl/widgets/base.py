@@ -59,7 +59,10 @@ class Widget(Scope):
         if not isinstance(self.parent_scope, Widget):
             self.parent_widget = None
         else:
-            self.parent_widget = parent_scope
+            self.set_parent_widget(parent_scope)
+
+    def set_parent_widget(self, wdg):
+        self.parent_widget = wdg
 
     def default(self, k, v):
         # TODO: Add warning
