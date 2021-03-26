@@ -17,22 +17,30 @@ from ..helpers import (
     PixelGrid
 )
 
-def customizer(default, alias=None):
+def make_alias(alias, v):
+    return {alias: v}
+
+def customizer(default, alias=None, optional=False):
     def wrapper(func):
         @functools.wraps(func)
         def call(self, k, *args, **kwargs):
             result = func(self, k, *args, **kwargs)
             
             if alias is not None:
-                return {alias: result}
+                return make_alias(alias, result)
             
             return {k: result}
 
         call.is_customizer = True
         call.default = default
+        call.optional = optional
 
         return call
     return wrapper
+
+def opt_customizer(*args, **kwargs):
+    kwargs.setdefault('optional', True)
+    return customizer(*args, **kwargs)
 
 class Widget(Scope):
     raw_name = 'basic'
@@ -86,9 +94,11 @@ class Widget(Scope):
             if v is None:
                 v = meth.default
 
-            result = meth(k, v)
+            if v is not None or not meth.optional:
+                result = meth(k, v)
 
-            self.processed[k] = result
+                if result is not None:
+                    self.processed[k] = result
 
     def get_customizers(self):
         return set({x for x in dir(self)
@@ -145,8 +155,12 @@ class Widget(Scope):
         try:
             return self.properties[key]
         except KeyError:
-            if isinstance(self.parent_scope, Widget):
-                return self.parent_scope.get_property(key)
+            for i in self.inherits:
+                try:
+                    if isinstance(i, Widget):
+                        return self.parent_scope.get_property(key)
+                except KeyError:
+                    pass
 
             raise
 
@@ -206,3 +220,12 @@ class Widget(Scope):
     @customizer(-1, alias='idc')
     def id(self, k, value):
         return value
+
+    @opt_customizer(Percentage(0), alias='x')
+    def left(self, k, value):
+        horiz = self.get_processed('horizontal')
+        start = self._resolve_directional('horizontal', 'width', 'start')
+
+        print(horiz, start, value)
+
+        self.processed['horizontal'] = make_alias('x', ((horiz - start) * (value / 100)) + start)

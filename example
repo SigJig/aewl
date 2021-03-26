@@ -1,12 +1,16 @@
 
-$point_size = 20;
+$point_size = 7;
 $bar_width = 60;
+$point_color = [0.168, 0.168, 0.168, 1];
+$bar_color = [0.168, 0.168, 0.168, 0.5];
+$text_size = $point_size * 0.5;
 
 display hud {
     body = [
         widget capture_progress(group) {
             height = $point_size;
-            horizontal = "center";
+            horizontal = "end";
+            left = 20%;
             
             // width of the bar plus the points on each side
             width = $bar_width + $point_size * 2;
@@ -16,19 +20,23 @@ display hud {
                     children = [
                         widget attackers(text) {
                             width = $point_size;
-                            height = $point_size;
+                            //height = $text_size;
+                            //sizeEx = $text_size;
+                            style = "0x02 + 0x10";
                             text = "0";
                             font = "PuristaLight";
                             horizontal = "start";
-                            colorBackground = [1, 0, 0, 1];
+                            colorBackground = $point_color;
                         },
                         widget defenders(text) {
                             width = $point_size;
-                            height = $point_size;
+                            //height = $text_size;
+                            //sizeEx = $text_size;
+                            style = "0x02 + 0x10";
                             text = "0";
                             font = "PuristaLight";
                             horizontal = "end";
-                            colorBackground = [0, 1, 0, 1];
+                            colorBackground = $point_color;
                         }
                     ];
                 },
@@ -37,12 +45,15 @@ display hud {
                     width = $bar_width;
 
                     children = [
-                        widget bar(progress) {},
+                        widget bar(progress) {
+                            colorFrame = $point_color;
+                            colorBar = $bar_color;
+                        },
                         widget title(text) {
+                            width = 80%;
                             height = 3;
                             text = "Setting up";
                             vertical = "center";
-                            colorBackground = [0, 0, 1, 1];
                         }
                     ];
                 }
