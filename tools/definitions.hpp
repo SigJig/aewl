@@ -75,7 +75,7 @@
 #define TR_SHOWROOT				1
 #define TR_AUTOCOLLAPSE			2
 
-class _basics
+class aewl_basics
 {
 	colorBackground[] = 
 	{

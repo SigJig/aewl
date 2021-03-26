@@ -13,8 +13,8 @@ class Unit(Scope):
         for v in self.widgets.values():
             v.process_all()
 
-    def export(self):
-        return {k: v.export() for k, v in self.widgets.items()}
+    def export(self, *args, **kwargs):
+        return {k: v.export(*args, **kwargs) for k, v in self.widgets.items()}
 
     def add_widget(self, name, *args, **kwargs):
         widget = self.make_widget(name, *args, **kwargs)

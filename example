@@ -4,41 +4,44 @@ $bar_width = 60;
 
 display hud {
     body = [
-        widget capture_progress(group_widget) {
+        widget capture_progress(group) {
             height = $point_size;
             
             // width of the bar plus the points on each side
             width = $bar_width + $point_size * 2;
 
             children = [
-                widget points(group_widget) {
+                widget points(group) {
                     children = [
-                        widget attackers(text_widget) {
+                        widget attackers(text) {
                             width = $point_size;
                             height = $point_size;
                             text = "0";
                             font = "PuristaLight";
                             horizontal = "start";
+                            colorBackground = [1, 0, 0, 1];
                         },
-                        widget defenders(text_widget) {
+                        widget defenders(text) {
                             width = $point_size;
                             height = $point_size;
                             text = "0";
                             font = "PuristaLight";
                             horizontal = "end";
+                            colorBackground = [0, 1, 0, 1];
                         }
                     ];
                 },
-                widget progressbar(group_widget) {
+                widget progressbar(group) {
                     horizontal = "center";
                     width = $bar_width;
 
                     children = [
-                        widget bar(progress_widget) {},
-                        widget text(text_widget) {
+                        widget bar(progress) {},
+                        widget title(text) {
                             height = 3;
                             text = "Setting up";
                             vertical = "center";
+                            colorBackground = [0, 0, 1, 1];
                         }
                     ];
                 }

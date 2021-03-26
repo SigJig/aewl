@@ -41,7 +41,7 @@ def dump_configs():
 
         for k in iter(loaded):
             if basic is None:
-                if k == '_basics':
+                if k == 'aewl_basics':
                     basic = loaded[k]
                     continue
                 else:
@@ -55,9 +55,10 @@ def dump_configs():
                     conf.pop(ck)
 
             if 'type' in conf:
-                conf.add_inherits('_basics') # adds only to rscs
+                if conf.inherits is None:
+                    conf.add_inherits('aewl_basics') # adds only to rscs
 
-            conf.name = re.sub(r'^Rsc(\w+)$', lambda x: x.group(1), conf.name)
+            conf.name = re.sub(r'^Rsc(\w+)$', lambda x: 'aewl_{}'.format(x.group(1)), conf.name)
             conf.name = conf.name.lower()
 
         with open('tools/configs.githide.hpp', 'w') as wp:

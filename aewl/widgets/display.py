@@ -17,6 +17,8 @@ class Display(Widget):
     # Might change it later so that only props in
     # a whitelist array are passed instead.
     blacklist_props = ['x', 'y', 'w', 'h']
+    raw_name = None
+    base_name = None
 
     def _resolve_sizing(self, dir_, val):
         if isinstance(val, Percentage):

@@ -3,6 +3,7 @@ from .base import Widget, customizer
 
 class Group(Widget):
     raw_name = 'group'
+    base_name = 'aewl_controlsgroupnoscroll'
 
     @customizer([], alias='controls')
     def children(self, k, body):
@@ -19,3 +20,4 @@ class Group(Widget):
 
 class Progress(Widget):
     raw_name = 'progress'
+    base_name = 'aewl_progress'

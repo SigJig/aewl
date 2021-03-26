@@ -1,6 +1,9 @@
 
 import functools
 import collections
+
+from armaconfig.config import Config
+
 from ..scope import Scope
 from ..utils import inheritors
 from ..helpers import (
@@ -33,7 +36,7 @@ def customizer(default, alias=None):
 
 class Widget(Scope):
     raw_name = 'basic'
-
+    base_name = 'aewl_basics'
     @classmethod
     def create(cls, type_, *args, **kwargs):
         if type_ is None:
@@ -84,39 +87,53 @@ class Widget(Scope):
 
             self.processed[k] = result
 
+    def get_customizers(self):
+        return set({x for x in dir(self)
+                        if getattr(getattr(self, x, None), 'is_customizers', False)})
+
     def process_all(self):
-        for attr in dir(self):
-            method = getattr(self, attr)
+        for attr in self.get_customizers().union(self.properties.keys()):
+            try:
+                prop = self.get_property(attr)
+            except KeyError:
+                prop = None
 
-            if getattr(method, 'is_customizer', False):
-                try:
-                    prop = self.get_property(attr)
-                except KeyError:
-                    prop = None
+            self.process(attr, prop)
 
-                self.process(attr, prop)
+    def export(self, parent=None):
+        conf = Config(self.name,
+            getattr(self, 'base_name', getattr(self, 'raw_name', None)),
+            parent
+        )
 
-    def export(self):
-        def _export(x):
+        def _export(x, n=None, cfg=None):
+            cfg = cfg if cfg is not None else conf
             if isinstance(x, list):
                 return [_export(y) for y in x]
             elif isinstance(x, dict):
-                return {k: _export(v) for k, v in x.items()}
+                cur_cfg = Config(n, parent=cfg)
+
+                for k, v in x.items():
+                    cur_cfg.add(_export(v, k, cur_cfg), k)
+
+                return cur_cfg
             elif hasattr(x, 'export'):
+                if isinstance(x, Widget):
+                    return x.export(cfg)
+
                 return x.export()
             else:
                 return x
-        
-        out = {}
+
         for val in self.processed.values():
             ek, ev = next(iter(val.items()))
 
             if ek in getattr(type(self), 'blacklist_props', []):
                 continue
 
-            out[ek] = _export(ev)
+            conf.add(_export(ev, ek), ek)
         
-        return out
+        return conf
 
     def add_property(self, key, value):
         self.properties[key] = value
