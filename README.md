@@ -9,7 +9,7 @@ It is, however, functional, and can be installed directly from the git repositor
 
 ## Usage
 The package exposes 5 main functions:
-* `get_base()` - Return an [https://github.com/SigJig/armaconfig.py](armaconfig.py) object consisting of all base GUI classes (exported by Arma 3 GUI creator)
+* `get_base()` - Return an [armaconfig.py]([armaconfig.py](https://github.com/SigJig/armaconfig.py)) object consisting of all base GUI classes (exported by Arma 3 GUI creator)
 * `file_to_file(src, dst, *args, **kwargs)` - Converts a .aewl file into an arma 3 config file
 * `file_to_str(src, *args, **kwargs)` - Converts a .aewl file into an arma 3 config string
 * `str_to_file(src, dst, *args, **kwargs)` - Converts an aewl string into an arma 3 config file
