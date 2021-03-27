@@ -1,9 +1,11 @@
 
 start: (stmt | _TERM)*
 
-?stmt: simple_stmt | compound_stmt
+?stmt: simple_stmt | compound_stmt | import
 ?simple_stmt: (property_def | variable_def) _TERM
 ?compound_stmt: widget_def | display_def | resource_def
+
+import: "import" joined_property
 
 widget_def: "widget" [ NAME ] inherits "{" suite "}"
 resource_def: "resource" [ NAME ] inherits_opt "{" suite "}"
@@ -25,6 +27,7 @@ variable_def: VARNAME "=" value_expr
 
 ?value: "[" [ value_expr ("," value_expr)* [ "," ] ] "]" -> array
     |   widget_def
+    |   joined_var
     |   VARNAME -> variable
     |   NAME -> property
     |   NUMBER "%" -> percentage
@@ -32,6 +35,9 @@ variable_def: VARNAME "=" value_expr
     |   ESCAPED_STRING -> string
     |   "{" suite "}" -> pod
     |   "(" value_expr ")"
+
+?joined_var: VARNAME ("." VARNAME)+
+?joined_property: NAME ("." NAME)
 
 VARNAME: /\$[a-zA-Z_]\w*/
 NAME: /[a-zA-Z_]\w*/
