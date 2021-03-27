@@ -7,7 +7,7 @@ $text_size = $point_size * 0.5;
 
 widget attackerswidget(text) {
     width = $point_size;
-    height = $text_size;
+    height = $point_size;
     //sizeEx = $text_size;
     style = "0x02 + 0x10";
     text = "0";
