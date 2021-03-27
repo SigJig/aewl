@@ -3,7 +3,7 @@ import json
 from aewl.parser import parse
 from armaconfig import dump, load
 
-with open('example') as fp:
+with open('example.aewl') as fp:
     un = parse(fp.read(), fp.name)
     un.process_all()
 

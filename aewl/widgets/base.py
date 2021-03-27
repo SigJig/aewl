@@ -5,9 +5,10 @@ import functools
 from armaconfig.config import Config
 
 from ..helpers import (Percentage, PixelGrid, PixelH, PixelW, SafeZoneH,
-                       SafeZoneW, SafeZoneX, SafeZoneY)
+                       SafeZoneW, SafeZoneX, SafeZoneY, Operation)
 from ..scope import Scope
 from ..utils import inheritors
+from ..defaults import ControlStyles, ControlTypes
 
 Alias = collections.namedtuple('alias', ['key', 'value'])
 
@@ -293,3 +294,30 @@ class Widget(Scope):
         Lean towards bottom from the vertical point
         """
         return self._resolve_lean('vertical', 'height', 'end', value)
+
+    def _make_control_operation(self, l, get_from):
+        assert len(l) == 2
+
+        make = []
+
+        for i in l:
+            if isinstance(i, list):
+                make.append(self._make_control_operation(i, get_from))
+            else:
+                make.append(get_from.get(i.upper()))
+
+        return Operation(make[0], make[1], op='+')
+
+    @opt_customizer('left', alias='style')
+    def style(self, k, value):
+        if isinstance(value, list):
+            return self._make_control_operation(value, ControlStyles)
+
+        return ControlStyles.get(value.upper())
+
+    @opt_customizer('static', alias='type')
+    def type(self, k, value):
+        if isinstance(value, list):
+            return self._make_control_operation(value, ControlTypes)
+
+        return ControlTypes.get(value.upper())

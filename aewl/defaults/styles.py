@@ -1,7 +1,24 @@
 
 import enum
+from ..utils import inheritors
 
-class ControlStyles(enum.Enum):
+class Gettable:
+    @classmethod
+    def get(cls, key):
+        key = key.upper()
+
+        try:
+            return getattr(cls, key)
+        except AttributeError:
+            for child in inheritors(cls):
+                st = getattr(child, key, None)
+
+                if st is not None:
+                    return st
+            
+            raise
+
+class ControlTypes(Gettable):
     STATIC = 0
     BUTTON = 1
     EDIT = 2
@@ -44,7 +61,7 @@ class ControlStyles(enum.Enum):
     LISTNBOX_CHECKABLE = 104
     VEHICLE_DIRECTION = 105
 
-class ControlTypes(enum.Enum):
+class ControlStyles(Gettable):
     LEFT = 0x00
     RIGHT = 0x01
     CENTER = 0x02
@@ -73,15 +90,15 @@ class ControlTypes(enum.Enum):
     VERTICAL = 0x01
     HORIZONTAL = 0
 
-class SLControlStyles(ControlStyles, enum.Enum):
+class SLControlStyles(ControlStyles):
     VERT = 0
     HORZ = 0x400
     TEXTURES = 0x10
 
-class LBControlStyles(ControlStyles, enum.Enum):
+class LBControlStyles(ControlStyles):
     TEXTURES = 0x10
     MULTI = 0x20
 
-class TRControlStyles(ControlStyles, enum.Enum):
+class TRControlStyles(ControlStyles):
     SHOWROOT = 1
     AUTOCOLLAPSE = 2

@@ -17,7 +17,8 @@ property_def: NAME "=" value_expr
 variable_def: VARNAME "=" value_expr
 
 ?value_expr: mul_expr (_add_op mul_expr)*
-?mul_expr: value (_mul_op value)*
+?mul_expr: union_expr (_mul_op union_expr)*
+?union_expr: value ("&" value)*
 
 !_add_op: "+" | "-"
 !_mul_op: "*" | "/" | "%"

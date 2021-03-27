@@ -5,17 +5,6 @@ $point_color = [0.168, 0.168, 0.168, 1];
 $bar_color = [0.168, 0.168, 0.168, 0.5];
 $text_size = $point_size * 0.5;
 
-widget attackerswidget(text) {
-    width = $point_size;
-    height = $point_size;
-    //sizeEx = $text_size;
-    style = "0x02 + 0x10";
-    text = "0";
-    font = "PuristaLight";
-    horizontal = "start";
-    colorBackground = [0.549, 0.301, 0.658, 1];
-};
-
 resource hud {
     body = [
         widget capture_progress(group) {
@@ -30,7 +19,14 @@ resource hud {
             children = [
                 widget points(group) {
                     children = [
-                        widget attackers(attackerswidget) {
+                        widget attackers(text) {
+                            width = $point_size;
+                            height = $point_size;
+                            style = "center" & "multi";
+                            text = "0";
+                            font = "PuristaLight";
+                            horizontal = "start";
+                            colorBackground = [0.549, 0.301, 0.658, 1];
                         },
                         widget defenders(attackers) {
                             horizontal = "end";

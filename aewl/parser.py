@@ -7,7 +7,7 @@ from lark import (
 )
 
 from .unit import Unit
-from .helpers import Percentage
+from .helpers import Percentage, Operation
 from .widgets import Widget, Display, Resource
 
 GRAMMAR_FILE = 'aewl/grammar.lark'
@@ -50,6 +50,13 @@ def parse_value(value, scope):
             method = getattr(left, m_name)
             
             return method(right)
+        elif value.data == 'union_expr':
+            left, right = (parse_value(x, scope) for x in value.children)
+
+            if not (isinstance(left, (str, list)) and isinstance(right, (str, list))):
+                raise TypeError('union requires two strings')
+
+            return [left, right]
         elif value.data == 'widget_def':
             name, inherits = value.children[:2]
             widget = scope.make_widget(str(name), inherits)
