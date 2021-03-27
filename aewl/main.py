@@ -13,7 +13,7 @@ def _export_w_base(src, name, parent=None):
     return un.export(parent=parent)
 
 def get_base():
-    with open(Path(__file__).parent.absolute().joinpath('defines.hpp')) as fp:
+    with open(Path(__file__).parent.absolute().joinpath('data', 'base.hpp')) as fp:
         return load(fp)
 
 def file_to_file(src, *args, **kwargs):

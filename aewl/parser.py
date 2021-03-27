@@ -1,4 +1,5 @@
 
+from pathlib import Path
 from lark import (
     Lark,
     Transformer as BaseTransformer,
@@ -10,7 +11,7 @@ from .unit import Unit
 from .helpers import Percentage, Operation
 from .widgets import Widget, Display, Resource
 
-GRAMMAR_FILE = 'aewl/grammar.lark'
+GRAMMAR_FILE = Path(__file__).parent.absolute().joinpath('data', 'grammar.lark')
 
 class Transformer(BaseTransformer):
     @v_args(inline=True)
