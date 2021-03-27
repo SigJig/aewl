@@ -1,4 +1,5 @@
 
+from armaconfig.config import Config
 from .scope import Scope
 from .widgets import Widget, Display
 
@@ -14,7 +15,13 @@ class Unit(Scope):
             v.process_all()
 
     def export(self, *args, **kwargs):
-        return {k: v.export(*args, **kwargs) for k, v in self.widgets.items()}
+        conf = Config(self.name, parent=kwargs.get('parent', None))
+        kwargs['parent'] = conf
+
+        for v in self.widgets.values():
+            conf.add(v.export(*args, **kwargs))
+
+        return conf
 
     def add_widget(self, name, *args, **kwargs):
         widget = self.make_widget(name, *args, **kwargs)
