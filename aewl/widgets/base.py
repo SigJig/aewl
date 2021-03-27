@@ -90,7 +90,10 @@ class Widget(Scope):
         if k in self.processed:
             return self.processed[k].value
 
-        value = self.properties.get(k, None)
+        try:
+            value = self.get_property(k)
+        except KeyError:
+            value = None
 
         try:
             meth = getattr(self, k)
@@ -170,7 +173,7 @@ class Widget(Scope):
             for i in self.inherits:
                 try:
                     if isinstance(i, Widget):
-                        return self.parent_scope.get_property(key)
+                        return i.get_property(key)
                 except KeyError:
                     pass
 
