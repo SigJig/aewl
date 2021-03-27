@@ -1,38 +1,26 @@
 
-import functools
 import collections
+import functools
 
 from armaconfig.config import Config
 
+from ..helpers import (Percentage, PixelGrid, PixelH, PixelW, SafeZoneH,
+                       SafeZoneW, SafeZoneX, SafeZoneY)
 from ..scope import Scope
 from ..utils import inheritors
-from ..helpers import (
-    PixelH,
-    PixelW,
-    Percentage,
-    SafeZoneW,
-    SafeZoneH,
-    SafeZoneX,
-    SafeZoneY,
-    PixelGrid
-)
 
-def make_alias(alias, v):
-    return {alias: v}
+Alias = collections.namedtuple('alias', ['key', 'value'])
 
 def customizer(default, alias=None, optional=False):
     def wrapper(func):
         @functools.wraps(func)
         def call(self, k, *args, **kwargs):
             result = func(self, k, *args, **kwargs)
-
-            if result is None:
-                return None
             
             if alias is not None:
-                return make_alias(alias, result)
+                return Alias(alias, result)
             
-            return {k: result}
+            return Alias(k, result)
 
         call.is_customizer = True
         call.default = default
@@ -48,6 +36,7 @@ def opt_customizer(*args, **kwargs):
 class Widget(Scope):
     raw_name = 'basic'
     base_name = 'aewl_basics'
+
     @classmethod
     def create(cls, type_, *args, **kwargs):
         if type_ is None:
@@ -63,6 +52,7 @@ class Widget(Scope):
         super().__init__(name=name, parent_scope=parent_scope)
 
         self.inherits = inherits
+        self.output = {}
         self.properties = {}
         self.processed = {}
         self.blacklist_props = []
@@ -77,44 +67,50 @@ class Widget(Scope):
 
     def default(self, k, v):
         # TODO: Add warning
-        self.processed[k] = {k: v}
+        self.processed[k] = Alias(k, v)
+        self.output[k] = v
+
+    def get_raw(self, k):
+        return self.output[k]
 
     def get_processed(self, k):
-        if k not in self.processed:
-            self.process(k, self.properties.get(k, None))
+        return self.process(k)
 
-        return next(iter(self.processed[k].values()))
+    def process(self, k):
+        if k in self.processed:
+            return self.processed[k].value
 
-    def process(self, k, v=None):
+        value = self.properties.get(k, None)
+
         try:
             meth = getattr(self, k)
             
             if not getattr(meth, 'is_customizer', False):
                 raise AttributeError()
         except AttributeError:
-            self.default(k, v)
+            return self.default(k, value)
         else:
-            if v is not None or not meth.optional:
-                if v is None:
-                    v = meth.default
+            if value is not None or not meth.optional:
+                if value is None:
+                    value = meth.default
 
-                result = meth(k, v)
+                result = meth(k, value)
 
-                if result is not None:
-                    self.processed[k] = result
+                self.processed[k] = result
+                self.output[result.key] = result.value
 
-    def get_customizers(self):
-        return set({x for x in dir(self)
-                        if getattr(getattr(self, x, None), 'is_customizer', False)})
+                return result.value
+
+            return value
 
     def process_all(self):
-        for attr in self.get_customizers().union(self.properties.keys()):
-            try:
-                prop = self.get_property(attr)
-            except KeyError:
-                prop = None
-
-            self.process(attr, prop)
+        props = list(self.properties.keys())
+        for attr in props + (
+                [x
+                for x in dir(self)
+                if x not in props and getattr(getattr(self, x, None), 'is_customizer', False)]
+                ):
+            self.process(attr)
 
     def export(self, parent=None):
         conf = Config(self.name,
@@ -141,13 +137,11 @@ class Widget(Scope):
             else:
                 return x
 
-        for val in self.processed.values():
-            ek, ev = next(iter(val.items()))
-
-            if ek in getattr(type(self), 'blacklist_props', []):
+        for k, v in self.output.items():
+            if k in getattr(type(self), 'blacklist_props', []):
                 continue
 
-            conf.add(_export(ev, ek), ek)
+            conf.add(_export(v, k), k)
         
         return conf
 
@@ -171,17 +165,20 @@ class Widget(Scope):
         kwargs.setdefault('parent_widget', self)
         return self.parent_scope.make_widget(*args, **kwargs)
 
+    def _make_pixel(self, len_name, val):
+        if len_name == 'width':
+            return PixelGrid.pixel_w(val)
+        
+        return PixelGrid.pixel_h(val)
 
-    def _resolve_sizing(self, dir_, val):
+    def _resolve_sizing(self, len_name, val):
         if isinstance(val, Percentage):
             if self.parent_widget is None:
                 raise Exception('no parent')
 
-            return self.parent_widget.get_processed(dir_) * (val / 100)
-        elif dir_ == 'width':
-            return PixelGrid.pixel_w(val)
-        elif dir_ == 'height':
-            return PixelGrid.pixel_h(val)
+            return self.parent_widget.get_processed(len_name) * (val / 100)
+        elif len_name in ('width', 'height'):
+            return self._make_pixel(len_name, val)
         else:
             raise Exception('BRO????')
 
@@ -192,14 +189,16 @@ class Widget(Scope):
     @customizer(Percentage(100), alias='h')
     def height(self, k, value):
         return self._resolve_sizing(k, value)
+    
+    def _resolve_start(self, dir_):
+        return 0
 
     def _resolve_directional(self, dir_, len_name, value):
         if value == 'start':
-            from . import display
-            
-            if isinstance(self.parent_widget, display.Display):
-                return self.parent_widget.get_processed(dir_)
-            
+            if self.parent_widget is not None:
+                # different for displays than for widgets
+                return self.parent_widget._resolve_start(dir_)
+
             return 0
         elif value == 'center':
             return (
@@ -224,11 +223,46 @@ class Widget(Scope):
     def id(self, k, value):
         return value
 
+    def _resolve_lean(self, dir_, len_name, towards, value):
+        origin = self.get_processed(dir_)
+
+        if isinstance(value, Percentage):
+            towards_point = self._resolve_directional(dir_, len_name, towards)
+
+            if towards == 'start':
+                return ((origin - towards_point) * ((100 - value) / 100)) + towards_point
+            
+            return ((towards_point - origin) * (value / 100)) + origin
+        else:
+            if towards == 'start':
+                return origin - self._make_pixel(len_name, value)
+            
+            return origin + self._make_pixel(len_name, value)
+
     @opt_customizer(Percentage(0), alias='x')
     def left(self, k, value):
-        horiz = self.get_processed('horizontal')
-        start = self._resolve_directional('horizontal', 'width', 'start')
+        """
+        Lean towards left from the horizontal point
+        """
+        return self._resolve_lean('horizontal', 'width', 'start', value)
 
-        print(horiz, start, value)
+    @opt_customizer(Percentage(0), alias='x')
+    def right(self, k, value):
+        """
+        Lean towards right from the horizontal point
+        """
+        return self._resolve_lean('horizontal', 'width', 'end', value)
 
-        self.processed['horizontal'] = make_alias('x', ((horiz - start) * ((100 - value) / 100)) + start)
+    @opt_customizer(Percentage(0), alias='y')
+    def top(self, k, value):
+        """
+        Lean towards top from the vertical point
+        """
+        return self._resolve_lean('vertical', 'height', 'start', value)
+
+    @opt_customizer(Percentage(0), alias='y')
+    def bottom(self, k, value):
+        """
+        Lean towards bottom from the vertical point
+        """
+        return self._resolve_lean('vertical', 'height', 'end', value)

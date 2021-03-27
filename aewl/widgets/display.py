@@ -31,6 +31,9 @@ class Display(Widget):
         else:
             raise Exception('BRO????')
 
+    def _resolve_start(self, dir_):
+        return self.get_processed(dir_)
+
     def _resolve_directional(self, dir_, len_name, value):
         sz_type, sz_unit = (
             (SafeZoneX(), SafeZoneW(1)) if len_name == 'width' else (SafeZoneY(), SafeZoneH(1))

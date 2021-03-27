@@ -9,8 +9,10 @@ display hud {
     body = [
         widget capture_progress(group) {
             height = $point_size;
-            horizontal = "end";
-            left = 20%;
+            horizontal = "center";
+            vertical = "center";
+            right = 20%;
+            top = 10%;
             
             // width of the bar plus the points on each side
             width = $bar_width + $point_size * 2;
