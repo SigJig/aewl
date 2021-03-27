@@ -64,6 +64,16 @@ def parse_value(value, scope):
             parse_widget(widget, value.children[2])
 
             return widget
+        elif value.data == 'pod':
+            dict_ = {}
+
+            for i in value.children[0].children:
+                if i.data != 'property_def':
+                    raise Exception('supposed to be a property you dense cunt')
+
+                dict_[str(i.children[0])] = parse_value(i.children[1], scope)
+
+            return dict_
         elif value.data == 'variable':
             return scope.get_variable(str(value.children[0]))
         elif value.data == 'property':

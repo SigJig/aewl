@@ -31,6 +31,10 @@ resource hud {
                         widget defenders(attackers) {
                             horizontal = "end";
                             colorBackground = [0.219, 0.639, 0.517, 1];
+
+                            attr = {
+                                test = 2;
+                            };
                         }
                     ];
                 },

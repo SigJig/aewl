@@ -30,6 +30,7 @@ variable_def: VARNAME "=" value_expr
     |   NUMBER "%" -> percentage
     |   NUMBER -> number
     |   ESCAPED_STRING -> string
+    |   "{" suite "}" -> pod
     |   "(" value_expr ")"
 
 VARNAME: /\$[a-zA-Z_]\w*/
