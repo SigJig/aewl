@@ -3,9 +3,10 @@ start: (stmt | _TERM)*
 
 ?stmt: simple_stmt | compound_stmt
 ?simple_stmt: (property_def | variable_def) _TERM
-?compound_stmt: widget_def | display_def
+?compound_stmt: widget_def | display_def | resource_def
 
 widget_def: "widget" [ NAME ] inherits "{" suite "}"
+resource_def: "resource" [ NAME ] inherits_opt "{" suite "}"
 display_def: "display" [ NAME ] inherits_opt "{" suite "}"
 
 inherits: "(" NAME ("," NAME)* [ "," ] ")"

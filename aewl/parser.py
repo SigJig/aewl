@@ -8,7 +8,7 @@ from lark import (
 
 from .unit import Unit
 from .helpers import Percentage
-from .widgets import Widget
+from .widgets import Widget, Display, Resource
 
 GRAMMAR_FILE = 'aewl/grammar.lark'
 
@@ -92,10 +92,16 @@ def parse(src, name):
     unit = Unit(name)
 
     for t in tree.children:
-        if t.data in ('widget_def', 'display_def'):
+        if t.data in ('widget_def', 'display_def', 'resource_def'):
             name, inherits = t.children[:2]
+            type_ = {
+                'widget_def': Widget,
+                'display_def': Display,
+                'resource_def': Resource
+            }
+            
             widget = unit.add_widget(
-                str(name), inherits, is_display=(t.data == 'display_def'))
+                str(name), inherits, type_=type_[t.data])
 
             parse_widget(widget, t.children[2])
         elif t.data == 'variable_def':
