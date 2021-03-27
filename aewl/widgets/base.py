@@ -39,8 +39,18 @@ class Widget(Scope):
 
     @classmethod
     def create(cls, type_, *args, **kwargs):
+        inherits = kwargs.get('inherits', [])
         if type_ is None:
-            return cls(*args, **kwargs)
+            cls_type = cls
+
+            try:
+                last_inherit = next(reversed(inherits))
+            except StopIteration:
+                pass
+            else:
+                cls_type = type(last_inherit)
+            
+            return cls_type(*args, **kwargs)
 
         for t in inheritors(cls):
             if getattr(t, 'raw_name', None) == type_:
@@ -113,8 +123,13 @@ class Widget(Scope):
             self.process(attr)
 
     def export(self, parent=None):
+        if self.inherits:
+            inherits_name = next(iter(self.inherits)).name
+        else:
+            inherits_name = getattr(self, 'base_name', getattr(self, 'raw_name', None))
+
         conf = Config(self.name,
-            getattr(self, 'base_name', getattr(self, 'raw_name', None)),
+            inherits_name,
             parent
         )
 
@@ -163,6 +178,15 @@ class Widget(Scope):
 
     def make_widget(self, *args, **kwargs):
         kwargs.setdefault('parent_widget', self)
+
+        if self.temp_array:
+            if 'temp_array' in kwargs:
+                cur = kwargs['temp_array']
+                cur += [x for x in self.temp_array if x not in cur]
+
+                kwargs['temp_array'] = cur
+            else:
+                kwargs.setdefault('temp_array', self.temp_array)
         return self.parent_scope.make_widget(*args, **kwargs)
 
     def _make_pixel(self, len_name, val):

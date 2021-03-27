@@ -29,13 +29,7 @@ resource hud {
                             horizontal = "start";
                             colorBackground = [0.549, 0.301, 0.658, 1];
                         },
-                        widget defenders(text) {
-                            width = $point_size;
-                            //height = $text_size;
-                            //sizeEx = $text_size;
-                            style = "0x02 + 0x10";
-                            text = "0";
-                            font = "PuristaLight";
+                        widget defenders(attackers) {
                             horizontal = "end";
                             colorBackground = [0.219, 0.639, 0.517, 1];
                         }

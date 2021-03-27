@@ -65,7 +65,11 @@ def parse_value(value, scope):
 
             return scope.get_property(str(value.children[0]))
     elif isinstance(value, list):
-        value = [parse_value(x, scope) for x in value]
+        for x in value:
+            scope.temp_array.append(parse_value(x, scope))
+
+        value = scope.temp_array
+        scope.temp_array = []
 
     return value
 
@@ -99,7 +103,7 @@ def parse(src, name):
                 'display_def': Display,
                 'resource_def': Resource
             }
-            
+
             widget = unit.add_widget(
                 str(name), inherits, type_=type_[t.data])
 
