@@ -216,11 +216,11 @@ class Widget(Scope):
         else:
             raise Exception('BRO????')
 
-    @customizer(Percentage(100), alias='w')
+    @customizer(0, alias='w')
     def width(self, k, value):
         return self._resolve_sizing(k, value)
 
-    @customizer(Percentage(100), alias='h')
+    @customizer(0, alias='h')
     def height(self, k, value):
         return self._resolve_sizing(k, value)
     
