@@ -21,6 +21,9 @@ class Display(Widget):
     base_name = None
 
     def _resolve_sizing(self, dir_, val):
+        if val is None:
+            val = Percentage(100)
+
         if isinstance(val, Percentage):
             val = val / 100
 

@@ -7,15 +7,16 @@ $bar_color = [0.168, 0.168, 0.168, 0.5];
 
 
 resource hud {
+    width = 20;
+    vertical = "center";
     body = [
         widget capture_progress(group) {
+            // width of the bar plus the points on each side
+            width = $bar_width + $point_size * 2;
             height = $point_size;
             horizontal = "center";
             vertical = "end";
             top = 5%;
-            
-            // width of the bar plus the points on each side
-            width = $bar_width + $point_size * 2;
 
             children = [
                 widget points(group) {

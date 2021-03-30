@@ -207,6 +207,9 @@ class Widget(Scope):
         return PixelGrid.pixel_h(val)
 
     def _resolve_sizing(self, len_name, val):
+        if val is None:
+            val = 0 if self.parent_widget is None else Percentage(100)
+
         if isinstance(val, Percentage):
             if self.parent_widget is None:
                 raise Exception('no parent')
@@ -217,12 +220,20 @@ class Widget(Scope):
         else:
             raise Exception('BRO????')
 
-    @customizer(0, alias='w')
+    @customizer(None, alias='w')
     def width(self, k, value):
+        """
+        Width of the widget.
+        Default is None, but is changed to 100% in _resolve_sizing if there exists a parent widget
+        """
         return self._resolve_sizing(k, value)
 
-    @customizer(0, alias='h')
+    @customizer(None, alias='h')
     def height(self, k, value):
+        """
+        Height of the widget.
+        Default is None, but is changed to 100% in _resolve_sizing if there exists a parent widget
+        """
         return self._resolve_sizing(k, value)
     
     def _resolve_start(self, dir_):
