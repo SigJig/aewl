@@ -147,7 +147,9 @@ def parse(src, name, path_parent=None):
                 path = path_parent.joinpath(path)
 
             with open(path) as fp:
-                unit.add_link(parse(fp.read(), fp.name), partials=partials)
+                unit.add_link(
+                    parse(fp.read(), fp.name, Path(fp.name).parent.absolute()),
+                partials=partials)
 
         elif t.data == 'macro_def':
             parse_macro(unit, t)
