@@ -63,9 +63,9 @@ class Widget(Scope):
         super().__init__(name=name, parent_scope=parent_scope)
 
         self.inherits = inherits
-        self.output = {}
-        self.properties = {}
-        self.processed = {}
+        self.output = {} # Output contains ready-to-be exported data
+        self.properties = {} # Properties raw after parsing
+        self.processed = {} # Cache for processed properties
         self.blacklist_props = []
 
         if not isinstance(self.parent_scope, Widget):
@@ -164,6 +164,12 @@ class Widget(Scope):
         
         return conf
 
+    def get(self, key):
+        try:
+            return self.get_property(key)
+        except KeyError:
+            return super().get(key)
+
     def add_property(self, key, value):
         self.properties[key] = value
 
@@ -196,7 +202,7 @@ class Widget(Scope):
     def _make_pixel(self, len_name, val):
         if len_name == 'width':
             return PixelGrid.pixel_w(val)
-        
+
         return PixelGrid.pixel_h(val)
 
     def _resolve_sizing(self, len_name, val):

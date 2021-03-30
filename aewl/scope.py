@@ -2,7 +2,7 @@
 class Scope:
     def __init__(self, name, parent_scope=None):
         self.name = name
-        self.variables = {}
+        self.macros = {}
         self.parent_scope = parent_scope
 
         # if the current parsing happens within an array, we need to keep
@@ -14,14 +14,14 @@ class Scope:
     def __str__(self):
         return self.name
 
-    def add_variable(self, key, value):
-        self.variables[key] = value
+    def add_macro(self, key, value):
+        self.macros[key] = value
 
-    def get_variable(self, key):
+    def get(self, key):
         try:
-            return self.variables[key]
+            return self.macros[key]
         except KeyError:
             if self.parent_scope is not None:
-                return self.parent_scope.get_variable(key)
-            
+                return self.parent_scope.get(key)
+
             raise

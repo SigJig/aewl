@@ -1,9 +1,10 @@
 
 $point_size = 5;
 $bar_width = 60;
+$text_size = $point_size * 0.5;
 $point_color = [0.168, 0.168, 0.168, 1];
 $bar_color = [0.168, 0.168, 0.168, 0.5];
-$text_size = $point_size * 0.5;
+
 
 resource hud {
     body = [
@@ -41,6 +42,8 @@ resource hud {
                     children = [
                         widget background(text) {
                             colorBackground = $bar_color;
+                            width = 50;
+                            height = 50;
                         },
                         widget bar(progress) {
                             colorFrame = [0, 0, 0, 0];

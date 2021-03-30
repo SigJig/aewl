@@ -2,10 +2,10 @@
 start: (stmt | _TERM)*
 
 ?stmt: simple_stmt | compound_stmt | import
-?simple_stmt: (property_def | variable_def) _TERM
+?simple_stmt: (property_def | macro_def) _TERM
 ?compound_stmt: widget_def | display_def | resource_def
 
-import: "import" ESCAPED_STRING
+import: "import" string
 
 widget_def: "widget" [ NAME ] inherits "{" suite "}"
 resource_def: "resource" [ NAME ] inherits_opt "{" suite "}"
@@ -16,7 +16,7 @@ inherits: "(" NAME ("," NAME)* [ "," ] ")"
 
 suite: (simple_stmt)*
 property_def: NAME "=" value_expr
-variable_def: VARNAME "=" value_expr
+macro_def: VARNAME "=" value_expr
 
 ?value_expr: mul_expr (_add_op mul_expr)*
 ?mul_expr: union_expr (_mul_op union_expr)*
@@ -27,13 +27,15 @@ variable_def: VARNAME "=" value_expr
 
 ?value: "[" [ value_expr ("," value_expr)* [ "," ] ] "]" -> array
     |   widget_def
-    |   VARNAME -> variable
+    |   VARNAME -> macro
     |   NAME -> property
     |   NUMBER "%" -> percentage
     |   NUMBER -> number
-    |   ESCAPED_STRING -> string
+    |   string
     |   "{" suite "}" -> pod
     |   "(" value_expr ")"
+
+string: ESCAPED_STRING
 
 VARNAME: /\$[a-zA-Z_]\w*/
 NAME: /[a-zA-Z_]\w*/

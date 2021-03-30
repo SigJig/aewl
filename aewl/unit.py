@@ -3,12 +3,33 @@ from armaconfig.config import Config
 from .scope import Scope
 from .widgets import Widget, Display
 
+class Link:
+    def __init__(self, unit, root, partials=[]):
+        self.unit = unit
+        self.root = root
+        self.partials = partials
+
+    def _verify_partials(self, key):
+        if self.partials and key not in self.partials:
+            raise KeyError(key)
+
+    def get(self, key):
+        self._verify_partials(key)
+
+        return self.unit.get(key)
+
+    def __getattr__(self, *args, **kwargs):
+        return getattr(self.unit, *args, **kwargs)
+
 class Unit(Scope):
     def __init__(self, name):
         self.links = []
         self.widgets = {}
 
         super().__init__(name)
+
+    def add_link(self, unit):
+        self.links.append(Link(unit, self))
 
     def process_all(self):
         for v in self.widgets.values():
@@ -40,28 +61,35 @@ class Unit(Scope):
 
         for i in inherits:
             if i in temp_dict:
-                wdg = temp_dict[i]
+                inherits_wdg.append(temp_dict[i])
             else:
-                wdg = self.get_widget(i)
+                try:
+                    inherits_wdg.append(self.get_widget(i))
+                except KeyError:
+                    if base_type is not None:
+                        raise Exception('Attempted inherit not found (%s)' % i)
 
-            if wdg is None:
-                if base_type is not None:
-                    raise Exception('Attempted inherit not found (%s)' % i)
-
-                base_type = i
-            else:
-                inherits_wdg.append(wdg)
+                    base_type = i
 
         return type_.create(base_type, name, inherits=inherits_wdg, parent_scope=parent_widget or self)
 
+    def get(self, key):
+        if key in self.macros:
+            return self.macros[key]
+        elif key in self.widgets:
+            return self.widgets[key]
+        else:
+            for link in self.links:
+                try:
+                    return link.get(key)
+                except KeyError:
+                    pass
+
+            raise KeyError(key)
+
     def get_widget(self, name):
-        if name in self.widgets:
-            return self.widgets.get(name)
-        
-        for li in self.links:
-            found = li.get_widget(name)
+        wdg = self.get(name)
 
-            if found is not None:
-                return found
-
-        return None
+        if not isinstance(wdg, Widget):
+            raise TypeError(
+                'Expected {}, got {}'.format(Widget.__name__, type(wdg).__name__))

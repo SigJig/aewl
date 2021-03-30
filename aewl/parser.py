@@ -75,13 +75,13 @@ def parse_value(value, scope):
                 dict_[str(i.children[0])] = parse_value(i.children[1], scope)
 
             return dict_
-        elif value.data == 'variable':
-            return scope.get_variable(str(value.children[0]))
+        elif value.data == 'macro':
+            return scope.get(str(value.children[0]))
         elif value.data == 'property':
             if not isinstance(scope, Widget):
                 raise Exception('property can not be defined outside widget')
 
-            return scope.get_property(str(value.children[0]))
+            return scope.get(str(value.children[0]))
     elif isinstance(value, list):
         for x in value:
             scope.temp_array.append(parse_value(x, scope))
@@ -93,8 +93,8 @@ def parse_value(value, scope):
 
 def parse_widget(widget, tree):
     for t in tree.children:
-        if t.data == 'variable_def':
-            parse_variable(widget, t)
+        if t.data == 'macro_def':
+            parse_macro(widget, t)
         elif t.data == 'property_def':
             name, value = t.children
 
@@ -103,8 +103,8 @@ def parse_widget(widget, tree):
             raise Exception('Unexpected %s' % t.data)
 
 
-def parse_variable(scope, tree):
-    scope.add_variable(
+def parse_macro(scope, tree):
+    scope.add_macro(
         str(tree.children[0]), parse_value(tree.children[1], scope))
 
 def parse(src, name):
@@ -126,8 +126,13 @@ def parse(src, name):
                 str(name), inherits, type_=type_[t.data])
 
             parse_widget(widget, t.children[2])
-        elif t.data == 'variable_def':
-            parse_variable(unit, t)
+        elif t.data == 'import':
+            path = t.children[0]
+
+            with open(path) as fp:
+                unit.add_link(parse(fp.read(), fp.name))
+        elif t.data == 'macro_def':
+            parse_macro(unit, t)
         else:
             raise Exception('Unexpected %s' % t.data)
 
