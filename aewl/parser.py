@@ -10,6 +10,7 @@ from lark import (
 from .unit import Unit
 from .helpers import Percentage, Operation
 from .widgets import Widget, Display, Resource
+from .scope import ListScope, DictScope
 
 GRAMMAR_FILE = Path(__file__).parent.absolute().joinpath('data', 'grammar.lark')
 
@@ -60,34 +61,30 @@ def parse_value(value, scope):
             return [left, right]
         elif value.data == 'widget_def':
             name, inherits = value.children[:2]
-            widget = scope.make_widget(str(name), inherits)
+            widget = scope.make_widget(str(name), inherits, parent_widget=scope)
 
             parse_widget(widget, value.children[2])
 
             return widget
         elif value.data == 'pod':
-            dict_ = {}
+            dictscope = DictScope({}, scope)
 
             for i in value.children[0].children:
                 if i.data != 'property_def':
                     raise Exception('supposed to be a property you dense cunt')
 
-                dict_[str(i.children[0])] = parse_value(i.children[1], scope)
+                dictscope[str(i.children[0])] = parse_value(i.children[1], dictscope)
 
-            return dict_
-        elif value.data == 'macro':
-            return scope.get(str(value.children[0]))
-        elif value.data == 'property':
-            if not isinstance(scope, Widget):
-                raise Exception('property can not be defined outside widget')
-
+            return dictscope
+        elif value.data in ('macro', 'property'):
             return scope.get(str(value.children[0]))
     elif isinstance(value, list):
-        for x in value:
-            scope.temp_array.append(parse_value(x, scope))
+        listscope = ListScope([], scope)
 
-        value = scope.temp_array
-        scope.temp_array = []
+        for x in value:
+            listscope.append(parse_value(x, listscope))
+
+        return listscope
 
     return value
 

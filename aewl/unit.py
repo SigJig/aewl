@@ -50,28 +50,20 @@ class Unit(Scope):
 
         return widget
 
-    def make_widget(self, name, inherits=[], type_=Widget, parent_widget=None, temp_array=[]):
+    def make_widget(self, name, inherits=[], type_=Widget, parent_widget=None):
         inherits_wdg = []
         base_type = None
-        temp_dict = {}
-
-        for w in temp_array:
-            if isinstance(w, Widget):
-                temp_dict[w.name] = w
-
         for i in inherits:
-            if i in temp_dict:
-                inherits_wdg.append(temp_dict[i])
-            else:
-                try:
-                    inherits_wdg.append(self.get_widget(i))
-                except KeyError:
-                    if base_type is not None:
-                        raise Exception('Attempted inherit not found (%s)' % i)
+            try:
+                inherits_wdg.append(parent_widget.get(i))
+            except KeyError:
+                if base_type is not None:
+                    raise Exception('Attempted inherit not found (%s)' % i)
 
-                    base_type = i
+                base_type = i
 
-        return type_.create(base_type, name, inherits=inherits_wdg, parent_scope=parent_widget or self)
+        return type_.create(base_type, name, inherits=inherits_wdg,
+                parent_scope=parent_widget if parent_widget is not None else self)
 
     def get(self, key):
         if key in self.macros:

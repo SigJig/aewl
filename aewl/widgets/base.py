@@ -6,7 +6,7 @@ from armaconfig.config import Config
 
 from ..helpers import (Percentage, PixelGrid, PixelH, PixelW, SafeZoneH,
                        SafeZoneW, SafeZoneX, SafeZoneY, Operation)
-from ..scope import Scope
+from ..scope import Scope, ContainerScope
 from ..utils import inheritors
 from ..defaults import ControlStyles, ControlTypes
 
@@ -69,14 +69,21 @@ class Widget(Scope):
         self.blacklist_props = []
 
         if not isinstance(self.parent_scope, Widget):
-            self.parent_widget = None
+            par = self.parent_scope
+            while par is not None:
+                if not isinstance(par, Widget):
+                    par = par.parent_scope
+                else:
+                    break
+  
+            self.parent_widget = par
         else:
             self.set_parent_widget(parent_scope)
 
     def set_parent_widget(self, wdg):
         self.parent_widget = wdg
 
-    def default(self, k, v):
+    def _default(self, k, v):
         # TODO: Add warning
         self.processed[k] = Alias(k, v)
         self.output[k] = v
@@ -102,7 +109,7 @@ class Widget(Scope):
             if not getattr(meth, 'is_customizer', False):
                 raise AttributeError()
         except AttributeError:
-            return self.default(k, value)
+            return self._default(k, value)
         else:
             if value is not None or not meth.optional:
                 if value is None:
@@ -139,7 +146,9 @@ class Widget(Scope):
 
         def _export(x, n=None, cfg=None):
             cfg = cfg if cfg is not None else conf
-            if isinstance(x, list):
+            if isinstance(x, ContainerScope):
+                return _export(x.export(), n, cfg)
+            elif isinstance(x, list):
                 return [_export(y) for y in x]
             elif isinstance(x, dict):
                 cur_cfg = Config(n, parent=cfg)
@@ -189,14 +198,6 @@ class Widget(Scope):
     def make_widget(self, *args, **kwargs):
         kwargs.setdefault('parent_widget', self)
 
-        if self.temp_array:
-            if 'temp_array' in kwargs:
-                cur = kwargs['temp_array']
-                cur += [x for x in self.temp_array if x not in cur]
-
-                kwargs['temp_array'] = cur
-            else:
-                kwargs.setdefault('temp_array', self.temp_array)
         return self.parent_scope.make_widget(*args, **kwargs)
 
     def _make_pixel(self, len_name, val):
