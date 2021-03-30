@@ -93,3 +93,5 @@ class Unit(Scope):
         if not isinstance(wdg, Widget):
             raise TypeError(
                 'Expected {}, got {}'.format(Widget.__name__, type(wdg).__name__))
+
+        return wdg
