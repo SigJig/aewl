@@ -28,8 +28,10 @@ class Unit(Scope):
 
         super().__init__(name)
 
-    def add_link(self, unit):
-        self.links.append(Link(unit, self))
+    def add_link(self, *args, **kwargs):
+        kwargs['root'] = self
+
+        self.links.append(Link(*args, **kwargs))
 
     def process_all(self):
         for v in self.widgets.values():

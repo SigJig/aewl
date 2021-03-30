@@ -104,9 +104,12 @@ def parse_macro(scope, tree):
     scope.add_macro(
         str(tree.children[0]), parse_value(tree.children[1], scope))
 
-def parse(src, name):
+def parse(src, name, path_parent=None):
     l = Lark.open(GRAMMAR_FILE, parser='lalr', transformer=Transformer())
     tree = l.parse(src)
+
+    if path_parent is None:
+        path_parent = Path.cwd().absolute()
 
     unit = Unit(name)
 
@@ -123,11 +126,29 @@ def parse(src, name):
                 str(name), inherits, type_=type_[t.data])
 
             parse_widget(widget, t.children[2])
-        elif t.data == 'import':
-            path = t.children[0]
+        elif t.data in ('import_full', 'import_partial', 'import_alias'):
+            data, children = t.data, t.children
+            partials = []
+            
+            if data == 'import_full':
+                path = children[0]
+            elif data == 'import_partial':
+                partials, path = children[:-1], children[-1]
+
+                raise NotImplementedError('Partial import not yet supported')
+            else:
+                path, alias = children
+                raise NotImplementedError('Alias import not yet supported')
+
+            if not path.endswith('.aewl'):
+                path += '.aewl'
+
+            if not path.startswith('/'):
+                path = path_parent.joinpath(path)
 
             with open(path) as fp:
-                unit.add_link(parse(fp.read(), fp.name))
+                unit.add_link(parse(fp.read(), fp.name), partials=partials)
+
         elif t.data == 'macro_def':
             parse_macro(unit, t)
         else:

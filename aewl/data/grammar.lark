@@ -5,14 +5,19 @@ start: (stmt | _TERM)*
 ?simple_stmt: (property_def | macro_def) _TERM
 ?compound_stmt: widget_def | display_def | resource_def
 
-import: "import" string
+?import: import_full | import_partial | import_alias
+import_full: "import" string
+import_partial: "import" "[" name_alias ("," name_alias)* [","] "]" "from" string
+import_alias: "import" string "as" NAME
+
+name_alias: dotted_name [ "as" NAME ]
 
 widget_def: "widget" [ NAME ] inherits "{" suite "}"
 resource_def: "resource" [ NAME ] inherits_opt "{" suite "}"
 display_def: "display" [ NAME ] inherits_opt "{" suite "}"
 
 inherits: "(" NAME ("," NAME)* [ "," ] ")"
-?inherits_opt: [ inherits ]
+inherits_opt: [ inherits ]
 
 suite: (simple_stmt)*
 property_def: NAME "=" value_expr
@@ -39,6 +44,8 @@ string: ESCAPED_STRING
 
 VARNAME: /\$[a-zA-Z_]\w*/
 NAME: /[a-zA-Z_]\w*/
+
+dotted_name: NAME ("." NAME)*
 
 _TERM: ";"
 _NEWLINE: ( /\r?\n[\t ]*/ )+
