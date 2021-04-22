@@ -57,6 +57,9 @@ class Unit(Scope):
         base_type = None
         for i in inherits:
             try:
+                if parent_widget is None:
+                    raise KeyError
+
                 inherits_wdg.append(parent_widget.get(i))
             except KeyError:
                 if base_type is not None:
