@@ -15,7 +15,7 @@ setup(
     author_email="sigmundklaa@outlook.com",
     url='https://github.com/SigJig/armaconfig.py',
     instalL_requires=[
-        'lark', 'armaconfig'
+        'lark-parser', 'armaconfig'
     ],
     dependency_links=[
         'git+git://github.com/SigJig/armaconfig.py.git@master#egg=armaconfig'  
