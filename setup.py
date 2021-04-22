@@ -22,7 +22,7 @@ setup(
     ],
     license='MIT',
     version='0.1.0',
-    packages=['aewl'],
+    packages=['aewl', 'aewl.widgets'],
     package_data={
         'aewl': [
             'data/base.hpp', 'data/grammar.lark'
