@@ -34,24 +34,28 @@ class Transformer(BaseTransformer):
 def parse_value(value, scope):
     if isinstance(value, Tree):
         if value.data in ('value_expr', 'mul_expr'):
-            left, op, right = value.children
-            left, right = parse_value(left, scope), parse_value(right, scope)
+            v = parse_value(value.children[0], scope)
 
-            m_name = {
-                'value_expr': {
-                    '+': '__add__',
-                    '-': '__sub__'
-                },
-                'mul_expr': {
-                    '*': '__mul__',
-                    '/': '__div__',
-                    '%': '__mod__'
-                }
-            }[value.data][op]
+            for idx in range(len(value.children)-2, 2):
+                op, right = value.children[idx:idx+2]
+                right = parse_value(right, scope)
 
-            method = getattr(left, m_name)
+                m_name = {
+                    'value_expr': {
+                        '+': '__add__',
+                        '-': '__sub__'
+                    },
+                    'mul_expr': {
+                        '*': '__mul__',
+                        '/': '__div__',
+                        '%': '__mod__'
+                    }
+                }[value.data][op]
+
+                method = getattr(v, m_name)
+                v = method(right)
             
-            return method(right)
+            return v
         elif value.data == 'union_expr':
             left, right = (parse_value(x, scope) for x in value.children)
 
