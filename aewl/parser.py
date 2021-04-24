@@ -9,8 +9,14 @@ from lark import (
 
 from .unit import Unit
 from .helpers import Percentage, Operation
-from .widgets import Widget, Display, Resource
-from .scope import ListScope, DictScope
+from .types import (
+    Widget,
+    Display,
+    Resource,
+    MacroRef,
+    PropertyRef,
+    InputOperation
+)
 
 GRAMMAR_FILE = Path(__file__).parent.absolute().joinpath('data', 'grammar.lark')
 
@@ -31,64 +37,36 @@ class Transformer(BaseTransformer):
     percentage = v_args(inline=True)(Percentage)
 
 
-def parse_value(value, scope):
+def parse_value(value):
     if isinstance(value, Tree):
         if value.data in ('value_expr', 'mul_expr'):
-            v = parse_value(value.children[0], scope)
-
-            for idx in range(len(value.children)-2, 2):
-                op, right = value.children[idx:idx+2]
-                right = parse_value(right, scope)
-
-                m_name = {
-                    'value_expr': {
-                        '+': '__add__',
-                        '-': '__sub__'
-                    },
-                    'mul_expr': {
-                        '*': '__mul__',
-                        '/': '__div__',
-                        '%': '__mod__'
-                    }
-                }[value.data][op]
-
-                method = getattr(v, m_name)
-                v = method(right)
-            
-            return v
+            return InputOperation([parse_value(x) for x in value.children])
         elif value.data == 'union_expr':
-            left, right = (parse_value(x, scope) for x in value.children)
-
-            if not (isinstance(left, (str, list)) and isinstance(right, (str, list))):
-                raise TypeError('union requires two strings')
-
-            return [left, right]
+            return [parse_value(x) for x in value.children]
         elif value.data == 'widget_def':
             name, inherits = value.children[:2]
-            widget = scope.make_widget(str(name), inherits, parent_widget=scope)
+            widget = Widget(str(name), inherits)
 
             parse_widget(widget, value.children[2])
 
             return widget
-        elif value.data == 'pod':
-            dictscope = DictScope({}, scope)
+        elif value.data == 'dict':
+            d = {}
 
             for i in value.children[0].children:
                 if i.data != 'property_def':
                     raise Exception('supposed to be a property you dense cunt')
 
-                dictscope[str(i.children[0])] = parse_value(i.children[1], dictscope)
+                d[str(i.children[0])] = parse_value(i.children[1])
 
-            return dictscope
-        elif value.data in ('macro', 'property'):
-            return scope.get(str(value.children[0]))
+            return d
+        elif value.data == 'macro':
+            return MacroRef(str(value.children[0]))
+        elif value.data == 'property': 
+            return PropertyRef(str(value.children[0]))
+
     elif isinstance(value, list):
-        listscope = ListScope([], scope)
-
-        for x in value:
-            listscope.append(parse_value(x, listscope))
-
-        return listscope
+        return [parse_value(x) for x in value]
 
     return value
 
@@ -99,14 +77,14 @@ def parse_widget(widget, tree):
         elif t.data == 'property_def':
             name, value = t.children
 
-            widget.add_property(str(name), parse_value(value, widget))
+            widget[str(name)] = parse_value(value)
         else:
             raise Exception('Unexpected %s' % t.data)
 
 
-def parse_macro(scope, tree):
-    scope.add_macro(
-        str(tree.children[0]), parse_value(tree.children[1], scope))
+def parse_macro(obj, tree):
+    obj.macros[str(tree.children[0])] = (
+        parse_value(tree.children[1]))
 
 def parse(src, name, path_parent=None):
     l = Lark.open(GRAMMAR_FILE, parser='lalr', transformer=Transformer())

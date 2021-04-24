@@ -1,5 +1,5 @@
 
-from .base import Widget, customizer
+from .base import customizer, Model
 from .group import Group
 from ..helpers import (
     Percentage,
@@ -8,17 +8,19 @@ from ..helpers import (
     SafeZoneX,
     SafeZoneY
 )
+from ..types import Widget
 
 BODYNAME = 'aewl_body'
 BODYNAME_BACKGROUND = 'aewl_body_background'
 
-class Display(Widget):
-    # Skip x y w h, as it does nothing on a display
-    # Might change it later so that only props in
-    # a whitelist array are passed instead.
-    blacklist_props = ['x', 'y', 'w', 'h']
+class DisplayModel(Model):
     raw_name = None
     base_name = None
+    fields = {
+        **Model.fields,
+        'body': [],
+        'body_background': []
+    }
 
     def _resolve_sizing(self, dir_, val):
         if val is None:
@@ -35,7 +37,7 @@ class Display(Widget):
             raise Exception('BRO????')
 
     def _resolve_start(self, dir_):
-        return self.get_processed(dir_)
+        return self.ctx.processed(dir_)
 
     def _resolve_directional(self, dir_, len_name, value):
         sz_type, sz_unit = (
@@ -47,12 +49,12 @@ class Display(Widget):
         elif value == 'center':
             return (
                 (sz_type + sz_unit) / 2
-                - self.get_processed(len_name) / 2
+                - self.ctx.processed(len_name) / 2
             )
         elif value == 'end':
             return (
                 (sz_type) + sz_unit
-                - self.get_processed(len_name)
+                - self.ctx.processed(len_name)
             )
 
     def _layer_group(self, name, body):
@@ -61,22 +63,28 @@ class Display(Widget):
         defined in the body.
         This is so that position can be calculated relative to the display
         """
-        group = Group(name, [], self)
-        group.add_children(body)
-        group.process_all()
+        if not len(body):
+            return {}
 
-        return group
+        wdg = Widget(
+            name, inherits=['group'])
+        wdg['children'] = body
+        ctx = self.ctx.add_child(wdg)
 
-    @customizer([], alias='controls')
-    def body(self, k, body):
+        ctx.process_all()
+
+        return wdg
+
+    @customizer(alias='controls')
+    def body(self, body):
         return {
             BODYNAME: self._layer_group(BODYNAME, body)}
 
-    @customizer([], alias='controlsBackground')
-    def body_background(self, k, body):
+    @customizer(alias='controlsBackground')
+    def body_background(self, body):
         return {
             BODYNAME_BACKGROUND: self._layer_group(BODYNAME_BACKGROUND, body)}
 
-    @customizer(-1, alias='idd')
-    def id(self, k, value):
+    @customizer(alias='idd')
+    def id(self, value):
         return value

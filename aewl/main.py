@@ -2,15 +2,18 @@
 from pathlib import Path
 from armaconfig import dumps, dump, load
 from .parser import parse
+from .context import Context
 
 def _export_w_base(src, name, path_parent=None, parent=None):
     un = parse(src, name, path_parent)
-    un.process_all()
+    ctx = Context(un, parent_export=parent)
+    ctx.process_all()
 
     if parent is None:
         parent = get_base()
 
-    return un.export(parent=parent)
+    # return un.export(parent=parent)
+    return ctx.export
 
 def _resolve_kwargs(kwargs):
     def _pop_or_none(k):

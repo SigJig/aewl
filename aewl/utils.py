@@ -1,6 +1,10 @@
 
-def inheritors(cls):
-    subs = set()
+def inheritors(cls, include_cls=False):
+    if include_cls:
+        subs = set([cls])
+    else:
+        subs = set()
+
     work = [cls]
 
     while work:

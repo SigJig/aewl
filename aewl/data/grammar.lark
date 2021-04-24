@@ -37,7 +37,7 @@ macro_def: VARNAME "=" value_expr
     |   NUMBER "%" -> percentage
     |   NUMBER -> number
     |   string
-    |   "{" suite "}" -> pod
+    |   "{" suite "}" -> dict
     |   "(" value_expr ")"
 
 string: ESCAPED_STRING

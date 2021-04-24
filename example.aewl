@@ -30,7 +30,7 @@ resource hud {
                             horizontal = "start";
                             colorBackground = [0.549, 0.301, 0.658, 1];
                         },
-                        widget defenders(attackers) {
+                        widget defenders(text) {
                             horizontal = "end";
                             colorBackground = [0.219, 0.639, 0.517, 1];
                         }
