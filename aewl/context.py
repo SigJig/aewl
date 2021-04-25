@@ -129,8 +129,11 @@ class Context:
     def _process(self, prop):
         prop = prop.lower()
 
-        value = self.prep_val(
-            self.property_local(prop, use_default=True))
+        try:
+            value = self.prep_val(
+                self.property_local(prop, use_default=True))
+        except KeyError:
+            value = None
 
         if isinstance(value, dict):
             default = self.default(prop)

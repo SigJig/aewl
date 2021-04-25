@@ -194,15 +194,18 @@ class Model:
         if not value:
             return None
 
-        background = next(
-            self.ctx.display_ctx.processed('body_background').values())
+        display = self.ctx.display_ctx or self.ctx.resource_ctx
+        if display is None:
+            raise Exception('in_background: no display')
+
+        background = list(display.processed('body_background').values())[0]
 
         d = {
             'x': 0,
             'y': 0
         }
 
-        for i, k in ('top', 'bottom', 'right', 'left'):
+        for i in ('top', 'bottom', 'right', 'left'):
             self.ctx.processed(i)
 
         ctx = self.ctx

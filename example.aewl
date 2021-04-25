@@ -40,6 +40,7 @@ resource hud {
                     children = [
                         widget background(text) {
                             colorBackground = $bar_color;
+                            in_background = 1;
                         },
                         widget bar(progress) {
                             colorFrame = [0, 0, 0, 0];
