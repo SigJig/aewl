@@ -25,7 +25,7 @@ setup(
     packages=['aewl', 'aewl.models', 'aewl.defaults'],
     package_data={
         'aewl': [
-            'data/base.hpp', 'data/grammar.lark'
+            'data/grammar.lark'
         ]
     }
 )

@@ -125,7 +125,7 @@ class Context:
                     if value is None:
                         value = meth.default
 
-                    result = meth(value)
+                    result = meth(prop, value)
 
                     self.cache[prop] = result
 
@@ -155,7 +155,7 @@ class Context:
                 self.export[i.name] = ctx.export
         else:    
             try:
-                keys = set()
+                keys = set(self.obj.properties.keys())
 
                 for m in self._models:
                     keys |= set(m.fields.keys())
@@ -196,8 +196,18 @@ class Context:
 
         return self
 
+    @cached_property
+    def x_ctx(self):
+        if not isinstance(self.obj, TypeBase):
+            if self.parent is None:
+                return None
+            else:
+                return self.parent.x_ctx
+
+        return self
+
     def model_method(self, method, *args, **kwargs):
-        ctx = self.widget_ctx
+        ctx = self.x_ctx
 
         for m in ctx._models:
             meth = getattr(m, method, None)

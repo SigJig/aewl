@@ -5,10 +5,7 @@ $text_size = $point_size * 0.5;
 $point_color = [0.168, 0.168, 0.168, 1];
 $bar_color = [0.168, 0.168, 0.168, 0.5];
 
-
 resource hud {
-    width = 20;
-    vertical = "center";
     body = [
         widget capture_progress(group) {
             // width of the bar plus the points on each side

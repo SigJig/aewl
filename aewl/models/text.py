@@ -3,10 +3,10 @@ from .base import customizer, Model
 from ..helpers import Percentage, PixelGrid
 
 class Text(Model):
-    raw_name = 'text'
-    base_name = 'aewl_text'
+    name = 'text'
     fields = {
         **Model.fields,
+        'style': ['left', 'multi'],
         'size': Percentage(100)
     }
 
@@ -21,8 +21,17 @@ class Text(Model):
         return self._resolve_sizeEx(val)
 
 class StructuredText(Text):
-    raw_name = 'structured_text'
-    base_name = 'aewl_structuredtext'
+    name = 'structured_text'
+    fields = {
+        **Model.fields,
+        'type': 'structured_text',
+        'style': 'left',
+        'attributes': {
+            'color': '#ffffff',
+            'colorlink': '#D09B43',
+            'align': 'left'
+        }
+    }
 
     @customizer(alias='size')
     def size(self, val):

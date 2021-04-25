@@ -3,6 +3,11 @@ from .base import customizer
 from .display import DisplayModel
 
 class ResourceModel(DisplayModel):
-    @customizer(10e10)
-    def duration(self, k, value):
+    fields = {
+        **DisplayModel.fields,
+        'duration': 10e10
+    }
+
+    @customizer()
+    def duration(self, value):
         return value

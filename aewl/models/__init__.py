@@ -4,3 +4,4 @@ from .display import *
 from .resource import *
 from .group import *
 from .text import *
+from .progress import *

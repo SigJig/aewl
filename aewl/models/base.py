@@ -15,7 +15,7 @@ def customizer(alias=None, optional=False, export=True, default=None):
     def wrapper(func):
         @functools.wraps(func)
         def call(self, k, *args, **kwargs):
-            result = func(self, k, *args, **kwargs)
+            result = func(self, *args, **kwargs)
             
             if alias is not None:
                 return Alias(alias, result)
@@ -37,8 +37,7 @@ def opt_customizer(default, *args, **kwargs):
     return customizer(*args, **kwargs)
 
 class Model:
-    raw_name = 'basic'
-    base_name = 'aewl_basics'
+    name = 'basic'
     fields = {
         'width': None,
         'height': None,
@@ -46,12 +45,29 @@ class Model:
         'vertical': 'start',
         'id': -1,
         'style': 'left',
-        'type': 'static'
+        'type': 'static',
+        'colorbackground': [0,0,0,0],
+        'colortext': [1,1,1,1],
+        'colorshadow': [0,0,0,0.5],
+        'tooltipcolortext': [1,1,1,1],
+        'tooltipcolorbox': [1,1,1,1],
+        'tooltipcolorshade': [0,0,0,0.65],
+        'shadow': 0,
+        'text': '',
+        'fixedwidth': 0,
+        'font': 'PuristaLight',
+        'linespacing': 1,
+        'deletable': 0,
+        'fade': 0,
+        'access': 0,
+        'default': 0,
+        'blinkingperiod': 0,
+        'moving': 0
     }
 
     def __new__(cls, typename, *args, **kwargs):
         for i in inheritors(cls, include_cls=True):
-            if i.raw_name == typename:
+            if i.name == typename:
                 inst = super().__new__(i)
                 inst.__init__(*args, **kwargs)
 
@@ -62,12 +78,6 @@ class Model:
     def __init__(self, skeleton, ctx=None):
         self.skeleton = skeleton
         self._ctx = ctx
-
-        if hasattr(super().__class__, 'fields'):
-            self.fields = {
-                **getattr(super(), 'fields', {}),
-                **self.fields
-            }
 
     def set_ctx(self, ctx):
         self._ctx = ctx
@@ -117,7 +127,7 @@ class Model:
         return PixelGrid.pixel_h(val)
 
     def _resolve_sizing(self, len_name, val):
-        no_parent = self.ctx.parent.widget_ctx is None
+        no_parent = self.ctx.parent.x_ctx is None
 
         if val is None:
             val = 0 if no_parent else Percentage(100)
@@ -126,7 +136,7 @@ class Model:
             if no_parent:
                 raise Exception('no parent')
 
-            return self.ctx.parent.processed(len_name) * (val / 100)
+            return self.ctx.parent.x_ctx.processed(len_name) * (val / 100)
         elif len_name in ('width', 'height'):
             return self._make_pixel(len_name, val)
         else:
@@ -152,7 +162,7 @@ class Model:
         return 0
 
     def _resolve_directional(self, dir_, len_name, value):
-        parent = self.ctx.parent.widget_ctx
+        parent = self.ctx.parent.x_ctx
 
         if value == 'start':
             if parent is not None:
@@ -162,12 +172,12 @@ class Model:
             return 0
         elif value == 'center':
             return (
-                parent.widget_ctx.processed(len_name) / 2
+                parent.processed(len_name) / 2
                 - self.ctx.processed(len_name) / 2
             )
         elif value == 'end':
             return (
-                parent.widget_ctx.processed(len_name)
+                parent.processed(len_name)
                 - self.ctx.processed(len_name)
             )
 

@@ -56,12 +56,13 @@ def dump_configs():
 
             if 'type' in conf:
                 if conf.inherits is None:
-                    conf.add_inherits('aewl_basics') # adds only to rscs
+                    pass
+                    #conf.add_inherits('aewl_basics') # adds only to rscs
 
             conf.name = re.sub(r'^Rsc(\w+)$', lambda x: 'aewl_{}'.format(x.group(1)), conf.name)
             conf.name = conf.name.lower()
 
-        with open('tools/configs.githide.hpp', 'w') as wp:
+        with open('tools/configs.githide.json', 'w') as wp:
             """ dct = {}
 
             for k in iter(loaded):
@@ -72,6 +73,6 @@ def dump_configs():
 
                 dct[n] = loaded[k].to_dict()
             """
-            dump(loaded, wp, indent=4)
+            json.dump(loaded, wp, indent=4)
 
 dump_configs()

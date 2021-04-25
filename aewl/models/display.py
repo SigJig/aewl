@@ -14,12 +14,17 @@ BODYNAME = 'aewl_body'
 BODYNAME_BACKGROUND = 'aewl_body_background'
 
 class DisplayModel(Model):
-    raw_name = None
-    base_name = None
+    name = None
     fields = {
-        **Model.fields,
+        'width': None,
+        'height': None,
+        'horizontal': 'start',
+        'vertical': 'start',
+        'id': -1,
         'body': [],
-        'body_background': []
+        'body_background': [],
+        'enablesimulation': True,
+        'access': 0
     }
 
     def _resolve_sizing(self, dir_, val):
@@ -29,12 +34,14 @@ class DisplayModel(Model):
         if isinstance(val, Percentage):
             val = val / 100
 
-        if dir_ == 'width':
-            return SafeZoneW(val)
-        elif dir_ == 'height':
-            return SafeZoneH(val)
+            if dir_ == 'width':
+                return SafeZoneW(val)
+            elif dir_ == 'height':
+                return SafeZoneH(val)
+            else:
+                raise Exception('BRO????')
         else:
-            raise Exception('BRO????')
+            return super()._resolve_sizing(dir_, val)
 
     def _resolve_start(self, dir_):
         return self.ctx.processed(dir_)
@@ -66,14 +73,13 @@ class DisplayModel(Model):
         if not len(body):
             return {}
 
-        wdg = Widget(
-            name, inherits=['group'])
+        wdg = Widget(name, inherits=['group'])
         wdg['children'] = body
-        ctx = self.ctx.add_child(wdg)
 
+        ctx = self.ctx.add_child(wdg)
         ctx.process_all()
 
-        return wdg
+        return ctx.export
 
     @customizer(alias='controls')
     def body(self, body):
@@ -88,3 +94,19 @@ class DisplayModel(Model):
     @customizer(alias='idd')
     def id(self, value):
         return value
+
+    @customizer(export=False)
+    def width(self, value):
+        return self._resolve_sizing('width', value)
+
+    @customizer(export=False)
+    def height(self, value):
+        return self._resolve_sizing('height', value)
+
+    @customizer(export=False)
+    def horizontal(self, value):
+        return self._resolve_directional('horizontal', 'width', value)
+
+    @customizer(export=False)
+    def vertical(self, value):
+        return self._resolve_directional('vertical', 'height', value)
