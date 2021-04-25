@@ -120,6 +120,10 @@ class Context:
 
         return val
 
+    def add_processed(self, prop, result, export=True):
+        self.cache[prop] = result
+        self.export[result.key] = self.prep_export(result.value)
+
     def _process(self, prop):
         value = self.prep_val(
             self.property_local(prop, use_default=True))
@@ -140,16 +144,13 @@ class Context:
 
                     result = meth(prop, value)
 
-                    self.cache[prop] = result
-
-                    if getattr(meth, 'export', True):
-                        self.export[result.key] = self.prep_export(result.value)
+                    self.add_processed(
+                        prop, result, getattr(meth, 'export', True))
 
                     return result
 
         result = Alias(prop, value)
-        self.cache[prop] = result
-        self.export[result.key] = result.value
+        self.add_processed(prop, result, True)
 
         return result
 

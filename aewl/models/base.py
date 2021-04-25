@@ -89,10 +89,6 @@ class Model:
         
         return self._ctx
 
-    @opt_customizer(False, export=False)
-    def in_background(self, value):
-        pass
-
     def _make_control_operation(self, l, get_from):
         assert len(l) == 2
 
@@ -193,8 +189,19 @@ class Model:
     def id(self, value):
         return value
 
+    @opt_customizer(False, export=False)
+    def in_background(self, value):
+        if value:
+            return None
+
+        for k in ('width', 'height', 'horizontal', 'vertical'):
+            pass
+
     def _resolve_lean(self, dir_, len_name, towards, value):
         origin = self.ctx.processed(dir_)
+
+        if value <= 0:
+            return origin
 
         if isinstance(value, Percentage):
             towards_point = self._resolve_directional(dir_, len_name, towards)
