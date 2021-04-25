@@ -5,7 +5,9 @@ class Group(Model):
     name = 'group'
     fields = {
         **Model.fields,
-        'vscrollbar': {},
+        'vscrollbar': {
+            'umm': 2
+        },
         'hscrollbar': {},
         'type': 'controls_group',
         'children': []

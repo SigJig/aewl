@@ -16,6 +16,7 @@ from .types import (
     PropertyRef,
     InputOperation
 )
+from .utils import dictmerge
 
 class Context:
     def __init__(self, obj, parent=None, **kwargs):
@@ -62,8 +63,14 @@ class Context:
 
             raise
 
+    def default(self, key):
+        for m in self._models:
+            if key in m.fields:
+                return m.fields[key]
+
+        raise KeyError(key)
+
     def property_global(self, key):
-        print('Getting ', key, str(self))
         try:
             return self.property_local(key, use_default=False)
         except KeyError:
@@ -116,6 +123,12 @@ class Context:
     def _process(self, prop):
         value = self.prep_val(
             self.property_local(prop, use_default=True))
+
+        if isinstance(value, dict):
+            default = self.default(prop)
+
+            if value is not default:
+                value = dictmerge(default.copy(), value)
 
         for m in self._models:
             meth = getattr(m, prop, None)
