@@ -86,7 +86,7 @@ class DisplayModel(Model):
         return {
             BODYNAME: self._layer_group(BODYNAME, body)}
 
-    @customizer(alias='controlsBackground')
+    @customizer(alias='controlsbackground')
     def body_background(self, body):
         return {
             BODYNAME_BACKGROUND: self._layer_group(BODYNAME_BACKGROUND, body)}

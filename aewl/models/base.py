@@ -194,8 +194,27 @@ class Model:
         if value:
             return None
 
-        for k in ('width', 'height', 'horizontal', 'vertical'):
-            pass
+        background = next(
+            self.ctx.display_ctx.processed('body_background').values())
+
+        d = {
+            'x': 0,
+            'y': 0
+        }
+
+        for i, k in ('top', 'bottom', 'right', 'left'):
+            self.ctx.processed(i)
+
+        ctx = self.ctx
+        while ctx is not None:
+            for k, v in d.items():
+                d[k] = ctx.export[k] + v
+
+            ctx = ctx.parent.widget_ctx
+
+        background.add(self.ctx.export)
+
+        self.ctx.parent.export.pop(self.ctx.export.name)
 
     def _resolve_lean(self, dir_, len_name, towards, value):
         origin = self.ctx.processed(dir_)
