@@ -57,11 +57,14 @@ class Base:
         else:
             self.properties = properties
 
+    def _key_transform(self, key):
+        return key.lower()
+
     def __setitem__(self, key, value):
-        self.properties[key] = value
+        self.properties[self._key_transform(key)] = value
 
     def __getitem__(self, key):
-        return self.properties[key]
+        return self.properties[self._key_transform(key)]
 
     def get(self, key, default=None):
         try:

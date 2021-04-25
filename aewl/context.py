@@ -55,6 +55,8 @@ class Context:
         return ctx
 
     def macro(self, key):
+        key = key.lower()
+
         try:
             return self.obj.macros[key]
         except KeyError:
@@ -125,6 +127,8 @@ class Context:
         self.export[result.key] = self.prep_export(result.value)
 
     def _process(self, prop):
+        prop = prop.lower()
+
         value = self.prep_val(
             self.property_local(prop, use_default=True))
 
