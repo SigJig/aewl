@@ -191,7 +191,7 @@ class Model:
 
     @opt_customizer(False, export=False)
     def in_background(self, value):
-        if value:
+        if not value:
             return None
 
         background = next(
