@@ -28,6 +28,7 @@ class Context:
 
         self.cache = {}
         self.children = []
+        self.symbolic = kwargs.pop('symbolic', False)
 
         if not isinstance(self.obj, Unit):
             self._inheritance, self._models = (
@@ -37,6 +38,32 @@ class Context:
 
     def __str__(self):
         return '{}({})'.format(type(self).__name__, self.obj.name)
+
+    def move(self, parent_export):
+        ctx = Context(
+            self.obj.copy(),
+            parent=self,
+            parent_export=parent_export,
+            symbolic=True)
+
+        if self.parent is not None:
+            self.parent.children.remove(self)
+
+            try:
+                del self.parent.export[self.export.name]
+            except KeyError:
+                pass
+
+            self.parent.export.add(ctx.export)
+
+        return ctx
+
+    def find_ctx(self, name):
+        for i in self.children:
+            if i.name == name:
+                return i
+
+        raise KeyError(name)
 
     def stack(self):
         dq = deque()

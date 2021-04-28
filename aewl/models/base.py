@@ -155,17 +155,19 @@ class Model:
         return self._resolve_sizing('height', value)
     
     def _resolve_start(self, dir_):
+        parent = self.ctx.parent.x_ctx
+
+        if parent is not None:
+            # different for displays than for widgets
+            return parent.model_method('_resolve_start', dir_)
+
         return 0
 
     def _resolve_directional(self, dir_, len_name, value):
         parent = self.ctx.parent.x_ctx
 
         if value == 'start':
-            if parent is not None:
-                # different for displays than for widgets
-                return parent.model_method('_resolve_start', dir_)
-
-            return 0
+            return self._resolve_start(dir_)
         elif value == 'center':
             return (
                 parent.processed(len_name) / 2
@@ -198,26 +200,13 @@ class Model:
         if display is None:
             raise Exception('in_background: no display')
 
-        background = list(display.processed('body_background').values())[0]
+        display.processed('body_background') # Make sure its been initialized before we add to it
+        background = display.export['body_background']
 
-        d = {
-            'x': 0,
-            'y': 0
-        }
+        ctx = self.ctx.move(background)
+        ctx.process_all()
 
-        for i in ('top', 'bottom', 'right', 'left'):
-            self.ctx.processed(i)
-
-        ctx = self.ctx
-        while ctx is not None:
-            for k, v in d.items():
-                d[k] = ctx.export[k] + v
-
-            ctx = ctx.parent.widget_ctx
-
-        background.add(self.ctx.export)
-
-        self.ctx.parent.export.pop(self.ctx.export.name)
+        return None
 
     def _resolve_lean(self, dir_, len_name, towards, value):
         origin = self.ctx.processed(dir_)
