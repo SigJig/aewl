@@ -27,10 +27,18 @@ class Transformer(BaseTransformer):
 
     @v_args(inline=True)
     def inherits(self, *i):
-        return [str(x) for x in i]
+        return [str(x) if not isinstance(x, (MacroRef)) else x for x in i]
 
     def inherits_opt(self, *args, **kwargs):
         return []
+
+    @v_args(inline=True)
+    def macro(self, name):
+        return MacroRef(str(name))
+
+    @v_args(inline=True)
+    def property(self, name):
+        return PropertyRef(str(name))
 
     array = list
     number = v_args(inline=True)(float)
@@ -60,10 +68,6 @@ def parse_value(value):
                 d[str(i.children[0])] = parse_value(i.children[1])
 
             return d
-        elif value.data == 'macro':
-            return MacroRef(str(value.children[0]))
-        elif value.data == 'property': 
-            return PropertyRef(str(value.children[0]))
 
     elif isinstance(value, list):
         return [parse_value(x) for x in value]

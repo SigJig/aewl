@@ -210,6 +210,9 @@ class Context:
                 for m in self._models:
                     keys |= set(m.fields.keys())
 
+                for i in self._inheritance:
+                    keys |= set(i.properties.keys())
+
                 for k in keys:
                     self.processed(k)
             except Exception as e:
@@ -292,7 +295,10 @@ class Context:
             models.appendleft(_make_model(None))
 
         for i in typenames:
-            found = self.parent.property_global(i)
+            if isinstance(i, MacroRef):
+                found = self.macro(i.name)
+            else:
+                found = self.parent.property_global(i)
 
             if found is None:
                 models.appendleft(_make_model(i))

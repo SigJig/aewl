@@ -38,7 +38,7 @@ class Unit:
 
         return widget
 
-    def make_widget(self, name, inherits=[], type_=Widget):
+    def make_widget(self, name, inherits=None, type_=Widget):
         return type_(name, inherits=inherits)
 
     def __getitem__(self, key):

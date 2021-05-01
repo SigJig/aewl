@@ -16,7 +16,7 @@ widget_def: "widget" [ NAME ] inherits "{" suite "}"
 resource_def: "resource" [ NAME ] inherits_opt "{" suite "}"
 display_def: "display" [ NAME ] inherits_opt "{" suite "}"
 
-inherits: "(" NAME ("," NAME)* [ "," ] ")"
+inherits: "(" (NAME | macro) ("," (NAME | macro))* [ "," ] ")"
 inherits_opt: [ inherits ]
 
 suite: (simple_stmt)*
@@ -32,7 +32,7 @@ macro_def: VARNAME "=" value_expr
 
 ?value: "[" [ value_expr ("," value_expr)* [ "," ] ] "]" -> array
     |   widget_def
-    |   VARNAME -> macro
+    |   macro
     |   NAME -> property
     |   NUMBER "%" -> percentage
     |   NUMBER -> number
@@ -41,6 +41,7 @@ macro_def: VARNAME "=" value_expr
     |   "(" value_expr ")"
 
 string: ESCAPED_STRING
+macro: VARNAME
 
 VARNAME: /\$[a-zA-Z_]\w*/
 NAME: /[a-zA-Z_]\w*/

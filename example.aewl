@@ -17,17 +17,20 @@ resource hud {
 
             children = [
                 widget points(group) {
+                    $base = widget _(text) {
+                        width = $point_size;
+                        height = $point_size;
+                        style = "center" & "multi";
+                        text = "0";
+                        font = "PuristaLight";
+                    };
+
                     children = [
-                        widget attackers(text) {
-                            width = $point_size;
-                            height = $point_size;
-                            style = "center" & "multi";
-                            text = "0";
-                            font = "PuristaLight";
+                        widget attackers($base) {
                             horizontal = "start";
                             colorBackground = [0.549, 0.301, 0.658, 1];
                         },
-                        widget defenders(text) {
+                        widget defenders($base) {
                             horizontal = "end";
                             colorBackground = [0.219, 0.639, 0.517, 1];
                         }

@@ -3,15 +3,18 @@ from typing import Union
 from collections import namedtuple
 from dataclasses import dataclass
 
-@dataclass
+# @dataclass
 class Ref:
     name: str
 
-@dataclass
+    def __init__(self, name):
+        self.name = name
+
+# @dataclass
 class PropertyRef(Ref):
     pass
 
-@dataclass
+# @dataclass
 class MacroRef(Ref):
     pass
 
