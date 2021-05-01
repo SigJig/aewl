@@ -27,6 +27,12 @@ class DisplayModel(Model):
         'access': 0
     }
 
+    def bodyname(self):
+        return BODYNAME
+
+    def bodyname_bg(self):
+        return BODYNAME_BACKGROUND
+
     def _resolve_sizing(self, dir_, val):
         if val is None:
             val = Percentage(100)
@@ -84,12 +90,12 @@ class DisplayModel(Model):
     @customizer(alias='controls')
     def body(self, body):
         return {
-            BODYNAME: self._layer_group(BODYNAME, body)}
+            self.bodyname(): self._layer_group(self.bodyname(), body)}
 
     @customizer(alias='controlsbackground')
     def body_background(self, body):
         return {
-            BODYNAME_BACKGROUND: self._layer_group(BODYNAME_BACKGROUND, body)}
+            self.bodyname_bg(): self._layer_group(self.bodyname_bg(), body)}
 
     @customizer(alias='idd')
     def id(self, value):

@@ -5,7 +5,7 @@ import functools
 from armaconfig.config import Config
 
 from ..helpers import (Percentage, PixelGrid, PixelH, PixelW, SafeZoneH,
-                       SafeZoneW, SafeZoneX, SafeZoneY, Operation)
+                       SafeZoneW, SafeZoneX, SafeZoneY, Operation, Factor)
 from ..utils import inheritors
 from ..defaults import ControlStyles, ControlTypes
 
@@ -155,19 +155,17 @@ class Model:
         return self._resolve_sizing('height', value)
     
     def _resolve_start(self, dir_):
-        parent = self.ctx.parent.x_ctx
-
-        if parent is not None:
-            # different for displays than for widgets
-            return parent.model_method('_resolve_start', dir_)
-
         return 0
 
     def _resolve_directional(self, dir_, len_name, value):
         parent = self.ctx.parent.x_ctx
 
         if value == 'start':
-            return self._resolve_start(dir_)
+            if parent is not None:
+                # different for displays than for widgets
+                return parent.model_method('_resolve_start', dir_)
+
+            return 0
         elif value == 'center':
             return (
                 parent.processed(len_name) / 2
@@ -201,7 +199,15 @@ class Model:
             raise Exception('in_background: no display')
 
         display.processed('body_background') # Make sure its been initialized before we add to it
-        background = display.export['body_background']
+        background = display.export['controlsbackground']
+        background = background[display.model_method('bodyname_bg')]
+
+        if 'controls' not in background:
+            background['controls'] = {}
+
+        background = background['controls']
+
+        del self.ctx.obj['in_background']
 
         ctx = self.ctx.move(background)
         ctx.process_all()

@@ -66,6 +66,9 @@ class Base:
     def __getitem__(self, key):
         return self.properties[self._key_transform(key)]
 
+    def __delitem__(self, key):
+        del self.properties[self._key_transform(key)]
+
     def get(self, key, default=None):
         try:
             return self[key]
@@ -75,6 +78,9 @@ class Base:
     def copy(self, **kwargs):
         kwargs.setdefault('name', self.name)
         kwargs.setdefault('properties', self.properties)
+
+        if self.inherits is not []:
+            kwargs.setdefault('inherits', self.inherits)
 
         return self.__class__(**kwargs)
 

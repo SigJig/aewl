@@ -54,7 +54,7 @@ class Context:
             except KeyError:
                 pass
 
-            self.parent.export.add(ctx.export)
+            parent_export.add(ctx.export)
 
         return ctx
 
@@ -151,7 +151,9 @@ class Context:
 
     def add_processed(self, prop, result, export=True):
         self.cache[prop] = result
-        self.export[result.key] = self.prep_export(result.value)
+
+        if export:
+            self.export[result.key] = self.prep_export(result.value)
 
     def _process(self, prop):
         prop = prop.lower()

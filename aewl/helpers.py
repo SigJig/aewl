@@ -9,8 +9,14 @@ class EmptyFactor:
     def __repr__(self):
         return str(self)
 
-    def _operation_skip_if(self, skipper, other, op):
-        if other == skipper:
+    def _operation_skip_if(self, skip, other, op):
+        if other == skip:
+            return self
+
+        return Operation(self, other, op)
+
+    def _skip_zero(self, other, op):
+        if isinstance(other, (float, int)) and float(other) == 0:
             return self
 
         return Operation(self, other, op)
@@ -25,10 +31,10 @@ class EmptyFactor:
         return Operation(self, other, '%')
 
     def __add__(self, other):
-        return self._operation_skip_if(0, other, '+')
+        return self._skip_zero(other, '+')
 
     def __sub__(self, other):
-        return self._operation_skip_if(0, other, '-')
+        return self._skip_zero(other, '-')
 
     def _filter_redundant_prod(self, return_):
         if float(self) == 1:
@@ -39,6 +45,9 @@ class EmptyFactor:
 class Factor(EmptyFactor, float):
     def __str__(self):
         return '{}({})'.format(type(self).__name__, float(self))
+
+    def export(self):
+        return float(self)
 
 class Operation(EmptyFactor):
     def __init__(self, left, right, op):
