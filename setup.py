@@ -7,6 +7,9 @@ path = Path(__file__).parent.absolute()
 with open(path.joinpath('README.md')) as fp:
     long_desc = fp.read()
 
+with open(path.joinpath('requirements.txt')) as fp:
+    requires = fp.read().splitlines()
+
 setup(
     name='aewl',
     description='Extensible GUI creation language for Arma 3',
@@ -14,12 +17,7 @@ setup(
     author='Sigmund "Sig" Klåpbakken',
     author_email="sigmundklaa@outlook.com",
     url='https://github.com/SigJig/armaconfig.py',
-    instalL_requires=[
-        'lark-parser', 'armaconfig'
-    ],
-    dependency_links=[
-        'git+git://github.com/SigJig/armaconfig.py.git@master#egg=armaconfig'  
-    ],
+    install_requires=requires,
     license='MIT',
     version='0.1.0',
     packages=['aewl', 'aewl.models', 'aewl.defaults'],
