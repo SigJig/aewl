@@ -1,4 +1,5 @@
 
+from pkg_resources import parse_requirements
 from setuptools import setup
 from pathlib import Path
 
@@ -8,7 +9,7 @@ with open(path.joinpath('README.md')) as fp:
     long_desc = fp.read()
 
 with open(path.joinpath('requirements.txt')) as fp:
-    requires = fp.read().splitlines()
+    requires = [str(x) for x in parse_requirements(fp)]
 
 setup(
     name='aewl',
