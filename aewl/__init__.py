@@ -5,5 +5,8 @@ from .main import (
     file_to_cfg,
     str_to_file,
     str_to_str,
-    str_to_cfg
+    str_to_cfg,
+    open_file,
+    read,
+    Context
 )

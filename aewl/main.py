@@ -4,13 +4,15 @@ from armaconfig import dumps, dump, load
 from .parser import parse
 from .context import Context
 
-def _export(src, name, path_parent=None, parent=None):
+def _ctx(src, name, path_parent=None, parent=None):
     un = parse(src, name, path_parent)
     ctx = Context(un, parent_export=parent)
     ctx.process_all()
 
-    # return un.export(parent=parent)
-    return ctx.export
+    return ctx
+
+def _export(*args, **kwargs):
+    return _ctx(*args, **kwargs).export
 
 def _resolve_kwargs(kwargs):
     def _pop_or_none(k):
@@ -23,6 +25,17 @@ def _resolve_kwargs(kwargs):
         'path_parent': _pop_or_none('path_parent'),
         'parent': _pop_or_none('parent')
     }, kwargs    
+
+def open_file(src, *args, **kwargs):
+    kwargs['path_parent'] = Path(src.name).parent.absolute()
+
+    return read(src.read(), *args, **kwargs)
+
+def read(src, *args, **kwargs):
+    name = kwargs.get('name', '')
+    popped_args, kwargs = _resolve_kwargs(kwargs)
+
+    return _ctx(src, name, **popped_args)
 
 def file_to_file(src, *args, **kwargs):
     kwargs['path_parent'] = Path(src.name).parent.absolute()
