@@ -45,3 +45,14 @@ def str_to_str(src, *args, **kwargs):
     popped_args, kwargs = _resolve_kwargs(kwargs)
 
     return dumps(_export(src, name, **popped_args), *args, **kwargs)
+
+def file_to_cfg(src, *args, **kwargs):
+    kwargs['path_parent'] = Path(src.name).parent.absolute()
+
+    return str_to_cfg(src.read(), *args, **kwargs)
+
+def str_to_cfg(src, *args, **kwargs):
+    name = kwargs.get('name', '')
+    popped_args, kwargs = _resolve_kwargs(kwargs)
+
+    return _export(src, name, **popped_args)
