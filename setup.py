@@ -16,7 +16,7 @@ setup(
     long_description=long_desc,
     author='Sigmund "Sig" Klåpbakken',
     author_email="sigmundklaa@outlook.com",
-    url='https://github.com/SigJig/armaconfig.py',
+    url='https://github.com/SigJig/aewl',
     install_requires=requires,
     license='MIT',
     version='0.1.0',
