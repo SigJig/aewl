@@ -44,7 +44,7 @@ class Model:
         'horizontal': 'start',
         'vertical': 'start',
         'id': -1,
-        'style': 'left',
+        'style': 'no_rect',
         'type': 'static',
         'colorbackground': [0,0,0,0],
         'colortext': [1,1,1,1],
