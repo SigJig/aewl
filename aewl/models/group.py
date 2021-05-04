@@ -5,8 +5,12 @@ class Group(Model):
     name = 'group'
     fields = {
         **Model.fields,
-        'vscrollbar': {},
-        'hscrollbar': {},
+        'vscrollbar': {
+            'height': 0
+        },
+        'hscrollbar': {
+            'width': 0
+        },
         'type': 'controls_group',
         'children': []
     }
@@ -25,3 +29,33 @@ class Group(Model):
             r[x.name] = ctx.export
 
         return r
+
+class ScrollableH(Group):
+    name = 'scrollableH'
+    fields = {
+        **Group.fields,
+        'hscrollbar': {
+
+        }
+    }
+
+class ScrollableW(Group):
+    name = 'scrollableW'
+    fields = {
+        **Group.fields,
+        'vscrollbar': {
+            
+        }
+    }
+
+class ScrollableHW(Group):
+    name = 'scrollable'
+    fields = {
+        **Group.fields,
+        'hscrollbar': {
+            
+        },
+        'vscrollbar': {
+
+        }
+    }

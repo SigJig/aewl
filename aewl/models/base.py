@@ -62,7 +62,8 @@ class Model:
         'access': 0,
         'default': 0,
         'blinkingperiod': 0,
-        'moving': 0
+        'moving': 0,
+        'size': Percentage(100)
     }
 
     def __new__(cls, typename, *args, **kwargs):
@@ -260,3 +261,13 @@ class Model:
         Lean towards bottom from the vertical point
         """
         return self._resolve_lean('vertical', 'height', 'end', value)
+
+    def _resolve_sizeEx(self, val):
+        if isinstance(val, Percentage):
+            return self.ctx.processed('height') * (val / 100)
+        else:
+            return PixelGrid.pixel_h(val)
+
+    @customizer(alias='sizeEx')
+    def size(self, val):
+        return self._resolve_sizeEx(val)

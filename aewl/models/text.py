@@ -6,19 +6,8 @@ class Text(Model):
     name = 'text'
     fields = {
         **Model.fields,
-        'style': ['left', 'multi'],
-        'size': Percentage(100)
+        'style': ['left', 'multi']
     }
-
-    def _resolve_sizeEx(self, val):
-        if isinstance(val, Percentage):
-            return self.ctx.processed('height') * (val / 100)
-        else:
-            return PixelGrid.pixel_h(val)
-
-    @customizer(alias='sizeEx')
-    def size(self, val):
-        return self._resolve_sizeEx(val)
 
 class StructuredText(Text):
     name = 'structured_text'
