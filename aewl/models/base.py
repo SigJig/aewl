@@ -166,7 +166,7 @@ class Model:
                 # different for displays than for widgets
                 return parent.model_method('_resolve_start', dir_)
 
-            return 0
+            return SafeZoneX() if len_name == 'width' else SafeZoneY()
         else:
             if parent is not None:
                 parent_val = parent.processed(len_name)
