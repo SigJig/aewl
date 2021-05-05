@@ -156,7 +156,7 @@ class Model:
         return self._resolve_sizing('height', value)
     
     def _resolve_start(self, dir_):
-        return 0
+        return Factor(0)
 
     def _resolve_directional(self, dir_, len_name, value):
         parent = self.ctx.parent.x_ctx
