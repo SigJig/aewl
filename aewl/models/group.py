@@ -6,10 +6,10 @@ class Group(Model):
     fields = {
         **Model.fields,
         'vscrollbar': {
-            'height': 0
+            'width': 0
         },
         'hscrollbar': {
-            'width': 0
+            'height': 0
         },
         'type': 'controls_group',
         'children': []
