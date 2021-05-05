@@ -167,16 +167,26 @@ class Model:
                 return parent.model_method('_resolve_start', dir_)
 
             return 0
-        elif value == 'center':
-            return (
-                parent.processed(len_name) / 2
-                - self.ctx.processed(len_name) / 2
-            )
-        elif value == 'end':
-            return (
-                parent.processed(len_name)
-                - self.ctx.processed(len_name)
-            )
+        else:
+            if parent is not None:
+                parent_val = parent.processed(len_name)
+            else:
+                if len_name == 'width':
+                    parent_val = SafeZoneX() + SafeZoneW(1)
+                else:
+                    parent_val = SafeZoneY() + SafeZoneH(1)
+
+            if value == 'center':
+                return (
+                    parent_val / 2
+                    - self.ctx.processed(len_name) / 2
+                )
+            elif value == 'end':
+                return (
+                    parent_val - self.ctx.processed(len_name)
+                )
+
+        raise Exception('unknown value {}'.format(value))
 
     @customizer(alias='x')
     def horizontal(self, value):
@@ -217,6 +227,7 @@ class Model:
 
     def _resolve_lean(self, dir_, len_name, towards, value):
         origin = self.ctx.processed(dir_)
+        value = Factor(value)
 
         if value <= 0:
             return origin
