@@ -123,6 +123,22 @@ class Model:
 
         return PixelGrid.pixel_h(val)
 
+    def _resolve_sizing_noparent(self, dir_, val):
+        if val is None:
+            val = Percentage(100)
+
+        if isinstance(val, Percentage):
+            val = val / 100
+
+            if dir_ == 'width':
+                return SafeZoneW(val)
+            elif dir_ == 'height':
+                return SafeZoneH(val)
+            else:
+                raise Exception('BRO????')
+        else:
+            return super()._resolve_sizing(dir_, val)
+
     def _resolve_sizing(self, len_name, val):
         no_parent = self.ctx.parent.x_ctx is None
 
@@ -131,7 +147,7 @@ class Model:
 
         if isinstance(val, Percentage):
             if no_parent:
-                raise Exception('no parent')
+                return self._resolve_sizing_noparent(len_name, val)
 
             return self.ctx.parent.x_ctx.processed(len_name) * (val / 100)
         elif len_name in ('width', 'height'):

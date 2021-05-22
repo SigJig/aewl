@@ -34,20 +34,7 @@ class DisplayModel(Model):
         return BODYNAME_BACKGROUND
 
     def _resolve_sizing(self, dir_, val):
-        if val is None:
-            val = Percentage(100)
-
-        if isinstance(val, Percentage):
-            val = val / 100
-
-            if dir_ == 'width':
-                return SafeZoneW(val)
-            elif dir_ == 'height':
-                return SafeZoneH(val)
-            else:
-                raise Exception('BRO????')
-        else:
-            return super()._resolve_sizing(dir_, val)
+        return self._resolve_sizing_noparent(dir_, val)
 
     def _resolve_start(self, dir_):
         return self.ctx.processed(dir_)
