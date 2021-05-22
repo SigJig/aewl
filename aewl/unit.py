@@ -52,3 +52,6 @@ class Unit:
                     pass
 
             raise KeyError(key)
+
+    def get(self, key):
+        return self.__getitem__(key)
