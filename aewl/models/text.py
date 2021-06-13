@@ -6,7 +6,7 @@ class Text(Model):
     name = 'text'
     fields = {
         **Model.fields,
-        'style': ['left', 'multi']
+        'style': ['left', 'multi', 'no_rect']
     }
 
 class StructuredText(Text):
@@ -14,7 +14,7 @@ class StructuredText(Text):
     fields = {
         **Model.fields,
         'type': 'structured_text',
-        'style': 'left',
+        'style': ['left', 'no_rect'],
         'attributes': {
             'color': '#ffffff',
             'colorlink': '#D09B43',
