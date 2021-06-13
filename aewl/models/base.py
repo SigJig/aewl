@@ -91,7 +91,7 @@ class Model:
         return self._ctx
 
     def _make_control_operation(self, l, get_from):
-        assert len(l) == 2
+        #assert len(l) == 2
 
         make = []
 
