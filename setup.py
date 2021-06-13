@@ -15,10 +15,7 @@ setup(
     author_email="sigmundklaa@outlook.com",
     url='https://github.com/SigJig/aewl',
     install_requires=[
-        'lark-parser', 'armaconfig'
-    ],
-    dependency_links=[
-        'git+git://github.com/SigJig/armaconfig.py.git@master#egg=armaconfig'  
+        'lark-parser', 'armaconfig @ git+git://github.com/SigJig/armaconfig.py.git@master#egg=armaconfig'
     ],
     license='MIT',
     version='0.1.0',
