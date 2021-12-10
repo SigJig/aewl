@@ -26,3 +26,13 @@ class StructuredText(Text):
     def size(self, val):
         # Just changes alias to size instead of sizeEx
         return self._resolve_sizeEx(val)
+
+class Input(Model):
+    name = 'input'
+    fields = {
+        **Model.fields,
+        'type': 'edit',
+        'style': ['left', 'frame'],
+        'canModify': True,
+        'autocomplete': ''
+    }
